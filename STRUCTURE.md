@@ -24,7 +24,8 @@ eez-agent/
 │       ├── INDEX.md
 │       ├── community-events/     (call scripts, moderator notes, QA)
 │       ├── technical-deep-dives/ (Zisk, proving, architecture)
-│       └── planning-reference/   (governance, tokenomics, roadmaps)
+│       ├── planning-reference/   (governance, tokenomics, roadmaps)
+│       └── media-ingestion/      (ingest staging area — pending KB promotion)
 │
 ├── knowledge/                ← Core knowledge base
 │   ├── eez/                  ← EEZ-specific materials
@@ -78,7 +79,8 @@ eez-agent/
 │   └── partner-outreach-email.md
 │
 ├── workflows/                ← Standard processes
-│   └── new-partner-onboarding.md
+│   ├── new-partner-onboarding.md
+│   └── content-ingestion.md
 │
 ├── data/                     ← Reference data
 │   ├── gips.yaml
@@ -87,7 +89,8 @@ eez-agent/
 └── .claude/                  ← Claude Code configuration
     ├── settings.json
     └── commands/
-        └── eez-brief.md
+        ├── eez-brief.md
+        └── ingest.md
 ```
 
 ---
@@ -242,7 +245,7 @@ Folders are named by **purpose** (community-events, technical-deep-dives, planni
 | Docs (Archived) | 5 | ✅ Stable |
 | Personas | 7 | ✅ Complete |
 | Templates | 1 | 🚧 Minimal |
-| Workflows | 1 | 🚧 Minimal |
+| Workflows | 2 | ✅ Growing |
 | Skills | 2 (GIP, partner-brief) | ✅ Functional |
 
 ---
