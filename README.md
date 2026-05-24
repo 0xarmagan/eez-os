@@ -16,7 +16,7 @@ A repo where:
 ## Personas
 
 The agent serves three:
-1. **Internal** — Ben Carvill (Head of DAO & Ecosystem) and the wider Gnosis team. Full corpus access.
+1. **Internal** — Armagan Ercan (Ecosystem Relations Lead) and the wider Gnosis team. Full corpus access.
 2. **Partner** — EEZ Alliance member. Public + their own record.
 3. **Builder** — External developer or researcher. Public material only.
 
@@ -77,7 +77,6 @@ eez-agent/
 
 These are flagged in the original plan and need confirmation before live integrations are wired.
 
-## Owners
+## Owner
 
-- **Repo owner:** Ben Carvill (Head of DAO & Ecosystem, Gnosis Ltd)
-- **Operating contractor:** Timesthree.io Ltd
+- **Repo owner:** Armagan Ercan (Ecosystem Relations Lead, Gnosis Ltd)
