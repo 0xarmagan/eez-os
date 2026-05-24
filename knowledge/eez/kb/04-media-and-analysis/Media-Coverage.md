@@ -39,6 +39,12 @@
 
 ---
 
+## Campaigns & Co-Marketing
+
+- **[OIF Adoption Push Campaign](OIF-Adoption-Push-Campaign.md)** — Ethereum Foundation + LI.FI ecosystem QT campaign, May 26 2026. EEZ participation brief and QT copy drafts in `outputs/drafts/`.
+
+---
+
 ## Community Calls
 
 - **[Jordi Baylina Community Call - Twitter Thread](Jordi-Baylina-Community-Call-TwitterThread.md)** — Public-facing thread format for sharing across social channels (23 tweets + LinkedIn version)
