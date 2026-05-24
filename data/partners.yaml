@@ -1,0 +1,125 @@
+# Partner data — INTERNAL ONLY
+# This file contains partner status, sentiment, and engagement notes.
+# Visibility: internal persona only. Never expose to partner or builder personas.
+# Last updated: April 2026
+
+partners:
+  - name: Linea
+    status: founding
+    public_amplifier: true
+    ethcc_video: true
+    contact: TBC
+    sentiment: positive
+    notes: |
+      Recorded at EthCC booth. Featured in partner intro video.
+      Logo wall partner.
+
+  - name: GrowThePie
+    status: founding
+    public_amplifier: true
+    ethcc_video: true
+    contact: TBC
+    sentiment: positive
+    notes: |
+      Recorded at EthCC booth. Strong analytics narrative fit.
+
+  - name: Nethermind
+    status: founding
+    public_amplifier: true
+    ethcc_video: true
+    contact: TBC
+    sentiment: positive
+    notes: |
+      Recorded at EthCC booth. Core infra credibility.
+
+  - name: Octant
+    status: founding
+    public_amplifier: true
+    ethcc_video: true
+    contact: TBC
+    sentiment: positive
+    notes: |
+      Recorded at EthCC booth. Public-goods funding angle.
+
+  - name: Centrifuge
+    status: founding
+    public_amplifier: true
+    ethcc_video: true
+    contact: TBC
+    sentiment: positive
+    notes: |
+      Recorded at EthCC booth. RWA narrative fit.
+
+  - name: Blockscout
+    status: founding
+    public_amplifier: true
+    ethcc_video: true
+    contact: TBC
+    sentiment: positive
+    notes: |
+      Recorded at EthCC booth. Existing GnosisDAO relationship via GIP-144 SLA.
+
+  - name: Balancer Labs
+    status: prospective
+    contact_handle: marcushardt
+    contact_role: CEO
+    expressed_interest_at: ethcc-form
+    expressed_interest_date: 2026-04-02
+    why: |
+      Liquidity fragmentation is the biggest structural problem they see.
+      Sync composability enables single-deployment pools.
+    expertise: AMM/DEX (V3 Boosted Pools, hooks, ERC4626), DeFi partner network (Aave, Lido)
+
+  - name: Four Pillars
+    status: prospective
+    contact_handle: FP_Jay
+    contact_name: Jay Jeong
+    contact_role: Co-Founder / Head of Validator
+    expressed_interest_at: ethcc-form
+    expressed_interest_date: 2026-04-03
+    why: EEZ restores unified composable economic system; institutional bridge.
+    expertise: Korean crypto research house, 500+ research pieces, Asia distribution
+
+  - name: Enterprise Ethereum Alliance
+    status: prospective
+    contact_handle: redoudoum
+    contact_name: Redwan
+    contact_role: Executive Director
+    expressed_interest_at: ethcc-form
+    expressed_interest_date: 2026-04-03
+    why: Perfect model for enterprise adoption.
+    expertise: Enterprise/institutional specs and use cases
+
+  - name: Metis Foundation
+    status: prospective
+    contact_handle: thiru_levi
+    contact_name: Thirumurugan Sivalingam
+    contact_role: DevRel Lead
+    expressed_interest_at: ethcc-form
+    expressed_interest_date: 2026-04-03
+    why: Sync composability + decentralised sequencer + AI = first-mover edge.
+    expertise: Decentralised sequencer (battle-tested), AI-native layer, METIS utility
+
+  - name: Gateway.fm
+    status: prospective
+    contact_handle: mandrigin
+    contact_name: Igor Mandrigin
+    contact_role: CTPO
+    expressed_interest_at: ethcc-form
+    expressed_interest_date: 2026-04-02
+    why: Gnosis/ZisK project context, liquidity unification needed.
+    expertise: L2 stack E2E development, bridges, agglayer, L2 provisioning
+
+# Onboarding pipeline summary
+pipeline:
+  ethcc_form_submissions: 83
+  marked_for_onboarding: 58
+  onboarded_to_telegram: 58
+  founding_partners: ~20
+  total_active: ~78
+
+channels:
+  public_telegram: "EEZ Alliance"
+  working_group_eta: "3-6 months out"
+  tally_form: "https://tally.so/r/NpLo4l"
+  brand_account: "@EthEconomicZone"

@@ -1,0 +1,42 @@
+# Freshness TTLs
+# How long cached data stays trusted before a live check is required.
+# Used by the sourcing policy in knowledge/reference/sourcing-policy.md
+
+ttls:
+  # Knowledge corpus (slow-moving, intentional updates)
+  knowledge_eez: 30d            # EEZ positioning evolves slowly
+  knowledge_eez_sources: 180d   # Source docs (Martin's talk, proposals): historical, rarely change
+  knowledge_eez_kb: 14d         # EEZ Knowledge Base: facts, FAQ, media coverage, alliance details
+  knowledge_products: 30d       # Product overviews refresh monthly
+  knowledge_dao: 14d            # DAO governance docs evolve
+  knowledge_reference: 90d      # Style guide, stakeholder map
+  knowledge_brand: 90d          # Brand foundation, guardrails, visual identity
+  knowledge_voice: 90d          # Tone-of-voice channel and sub-brand registers
+  knowledge_ecosystem: 60d      # Audience and landscape
+
+  # Data files (semi-structured)
+  data_partners: 7d         # Partner status drifts; weekly refresh
+  data_gips: 1d             # GIP status changes daily during active phases
+  data_kpis: 1d             # KPIs refresh daily from Dune
+  data_products: 14d        # Product metadata fortnightly
+
+  # Live sources (always fetch)
+  snapshot: 0               # Always live
+  forum: 0                  # Always live
+  github: 0                 # Always live
+  dune: 0                   # Always live
+  gnosis_data_api: 0        # Always live
+
+# When TTL is 0, the cache is reference-only; current state must be fetched.
+# When TTL is exceeded, agent should refresh before stating the data as current.
+
+last_refresh:
+  knowledge_eez: 2026-04-25
+  knowledge_eez_sources: 2026-04-26   # Imported from gnosis-marketing repo
+  knowledge_eez_kb: 2026-04-26        # Imported from gnosis-marketing/eez/Knowledge-Base
+  knowledge_products: 2026-04-25
+  knowledge_brand: 2026-04-26         # Imported from gnosis-marketing repo
+  knowledge_voice: 2026-04-26         # Imported from gnosis-marketing repo
+  knowledge_ecosystem: 2026-04-26     # Imported from gnosis-marketing repo
+  data_partners: 2026-04-25
+  data_gips: 2026-04-25

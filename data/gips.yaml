@@ -1,0 +1,104 @@
+# GnosisDAO Improvement Proposal register
+# Public data unless marked internal_only.
+# Last updated: April 2026
+# Live source of truth: forum.gnosis.io and Snapshot
+
+gips:
+  - id: GIP-122
+    title: Gnosis VPN funding (HOPR)
+    status: passed
+    year: 2025
+    summary: |
+      $4.8M HOPR token investment over two years plus 500 GNO for node runner
+      incentives. Funds the build phase following the GIP-98 PoC.
+    related: [GIP-98, GIP-129]
+
+  - id: GIP-129
+    title: Gnosis VPN legal wrapper (Seldon Inc)
+    status: passed
+    year: 2025
+    summary: |
+      Establishes Seldon Inc as a standalone entity to ensure Gnosis VPN
+      has the legal and technical scaffolding to reach the global market.
+
+  - id: GIP-141
+    title: Strategic Visual Adoption package
+    status: phase-2
+    posts: 18
+    category: 21
+    themes: [DAO comms value, metrics, anything-gets-funded criticism, governance quality]
+
+  - id: GIP-144
+    title: Blockscout SLA renewal
+    status: phase-3
+    posts: 6
+    category: 21
+    summary: |
+      Broadly viewed as no-brainer infra renewal; emphasises explorer
+      usage growth and universal bridge indexer work.
+
+  - id: GIP-145
+    title: Futarchy pilot
+    status: phase-3
+    posts: 12
+    category: 21
+    themes: [futarchy incentives, liquidity, oracle risk, Kleros futarchy safeguard]
+
+  - id: GIP-146
+    title: NAV per GNO
+    status: open
+    posts: 5
+    category: 20
+    themes: [intrinsic value, buybacks, venture book transparency, $50k budget question]
+    engagement_signal: |
+      Low-reply, high-leverage. Good place to add specifics on methodology
+      (what to count, how to value VC positions).
+
+  - id: GIP-148
+    title: Treasury manager mandate
+    status: passed
+    summary: Treasury manager transition and execution expectations.
+
+  - id: GIP-149
+    title: Revoke.cash support
+    status: phase-3
+    posts: 8
+    category: 21
+    themes: [public-goods funding, security infra, futarchy market, Kleros Cooperative signalling]
+    engagement_signal: |
+      Low-reply, high-leverage. Good spot for delegates to state how they
+      weigh public-good safety vs treasury spend.
+
+  - id: GIP-XX-pay-staking
+    title: Native GNO staking for Gnosis Pay card holders
+    status: draft
+    posts: 3
+    themes: [GNO staking economics, Gnosis Pay UX, treasury-funded yield]
+
+# In-flight GIPs being shepherded by Ben
+in_flight:
+  - id: TBC
+    title: Crisis Response Framework
+    co_authors: [Sebastian Bürgel, Rich (HOPR), Ben Carvill]
+    status: drafting
+    notes: |
+      v2 incorporates: hierarchy of intervention (account → module → protocol → asset →
+      state change → network scope), impartiality safeguards, prevention &
+      systemic risk reduction, multi-channel communication.
+    public_roundtable_date: "2026-03-26"
+    internal_only: true
+
+# Live themes for governance digests
+live_themes:
+  treasury_and_valuation:
+    - GIP-148 treasury manager transition
+    - GIP-146 NAV, venture book, buyback logic
+  security_infra_public_goods:
+    - GIP-144 Blockscout SLA
+    - GIP-149 Revoke.cash as DAO-funded security infra
+  governance_design:
+    - GIP-145 Futarchy pilot
+    - GIP-141 meta-governance debate on funding standards
+  product_ux:
+    - GIP-XX-pay-staking
+    - Gnosis 3.0 narrative & onboarding (GIP-141 thread)

@@ -1,0 +1,21 @@
+{
+  "_comment": "Permissions and MCP allowlist. Filled in when integrations are wired.",
+  "permissions": {
+    "allow": [],
+    "deny": []
+  },
+  "mcp_servers": {
+    "_comment": "Trusted MCPs for this agent. See integrations/ for setup notes.",
+    "snapshot": "read-only",
+    "discourse_forum": "read-only",
+    "github": "read-only",
+    "notion": "read-only",
+    "google_drive": "read-only",
+    "dune": "read-only"
+  },
+  "confirm_before_call": [
+    "any tool that posts",
+    "any tool that sends email",
+    "any tool that modifies external state"
+  ]
+}
