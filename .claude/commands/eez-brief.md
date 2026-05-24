@@ -30,4 +30,4 @@ Use the brief template defined in `skills/partner-brief/SKILL.md`.
 
 - If the partner is not in `data/partners.yaml`, flag as new and produce a research-stub brief instead, noting what is missing.
 - If sentiment is "dormant" or "drift", lead with a re-engagement angle.
-- If multiple partners share the name (rare), ask Ben to disambiguate.
+- If multiple partners share the name (rare), ask Armagan to disambiguate.

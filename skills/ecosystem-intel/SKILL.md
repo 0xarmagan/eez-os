@@ -53,7 +53,7 @@ Be specific — what claim, what framing, which audience.
 ### EEZ Response — One Line Each
 For each threat or opportunity: what does EEZ say or do?
 This is the actionable layer — draft talking point, positioning note,
-or flag for Ben if it requires a strategic response.
+or flag for Armagan if it requires a strategic response.
 ```
 
 ## Live Sources (Web Search Required)
@@ -81,11 +81,11 @@ Key EEZ differentiators to defend: synchronous composability (same-block atomici
 
 ## Output
 
-Structured brief in terminal. Optionally save to `outputs/drafts/ecosystem-intel-[date].md` for sharing with Ben or team.
+Structured brief in terminal. Optionally save to `outputs/drafts/ecosystem-intel-[date].md` for sharing with Armagan or team.
 
 ## Rules
 
 - Always use live web search. Competitive landscape moves fast — cached data is stale by definition.
 - Be specific on threat signals. "Superchain is a threat" is not useful. "Superchain announced shared sequencing with 8 chains and framed it as 'atomic composability' in their EthCC keynote" is.
 - The EEZ response column is the actionable output — don't skip it.
-- Flag anything that requires a Ben-level strategic decision rather than a talking-point response.
+- Flag anything that requires a strategic decision rather than a talking-point response.

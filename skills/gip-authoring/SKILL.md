@@ -14,9 +14,9 @@ Use this skill when drafting a GnosisDAO Improvement Proposal (GIP) or any forum
 Before drafting, confirm:
 1. **Topic and scope** — what is being proposed?
 2. **GIP category** — funding, governance, technical, operational? (Categories are listed on forum.gnosis.io)
-3. **Co-authors** — anyone listed alongside Ben?
+3. **Co-authors** — anyone listed alongside Armagan?
 4. **Urgency** — is this a draft for community discussion or a near-final ready for phase-2?
-5. **Sign-off chain** — who must review before posting? Default: relevant product lead for technical claims, Friederike + Adz for legal/comms, Ben for everything else.
+5. **Sign-off chain** — who must review before posting? Default: relevant product lead for technical claims, Friederike + Adz for legal/comms, Armagan for everything else.
 
 If any of these are missing, ask once before drafting.
 
@@ -72,8 +72,8 @@ Apply the style guide (`knowledge/reference/style-guide.md`):
 ## After drafting
 
 1. Save to `outputs/drafts/gip-[topic]-[date].md`
-2. Surface the sign-off chain to Ben before any posting
-3. Do not post to the forum yourself; that always requires Ben's explicit go-ahead
+2. Surface the sign-off chain to Armagan before any posting
+3. Do not post to the forum yourself; that always requires Armagan's explicit go-ahead
 
 ## Templates
 

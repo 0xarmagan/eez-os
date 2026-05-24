@@ -20,7 +20,7 @@ Also — are you going to be in [location]? We're recording short interviews at 
 
 Hold everything until the [date] and we'll tag you in the announcement.
 
-Ben
+Armagan
 
 ---
 
@@ -34,5 +34,5 @@ Ben
 
 - No em dashes
 - No "Hi" formal opener; use "Hey" or first name
-- Sign as "Ben", not "Best regards, Ben"
+- Sign as "Armagan", not "Best regards, Armagan"
 - Hold the substance up front; ask at the end

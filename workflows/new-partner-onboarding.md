@@ -15,7 +15,7 @@ The end-to-end playbook for moving a new contact from interest to active allianc
 
 - Add the contact to `data/partners.yaml` with `status: prospective`
 - Capture: name, org, role, handle, source, why they want in, expertise, date
-- Decide: is this a builder operating somewhere in the EVM landscape? If yes, default to welcoming. If unclear, flag to Ben.
+- Decide: is this a builder operating somewhere in the EVM landscape? If yes, default to welcoming. If unclear, flag to Armagan.
 
 ### 2. Alliance overview (within 1 week)
 
@@ -45,9 +45,9 @@ The end-to-end playbook for moving a new contact from interest to active allianc
 
 ## Sign-offs
 
-- **Welcoming a new partner to the Telegram group** — Ben (no further sign-off needed for vetted EVM operators)
-- **Co-marketing asks** — Ben + Adz
-- **Public amplification of a partner's work** — Ben + ROM
+- **Welcoming a new partner to the Telegram group** — Armagan (no further sign-off needed for vetted EVM operators)
+- **Co-marketing asks** — Armagan + Adz
+- **Public amplification of a partner's work** — Armagan + ROM
 
 ## Outputs
 

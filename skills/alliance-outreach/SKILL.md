@@ -110,7 +110,7 @@ When EEZ joins an ecosystem-wide campaign as a QT participant:
 - Produce two versions: EEZ-voice (for EEZ accounts) and a partner-voice brief (for partner to adapt)
 - Message sync check: does the partner copy match EEZ's framing? Flag divergences.
 - Amplification sequence: who posts first, what the other amplifies, timing window
-- Asset checklist: EEZ provides (logo, boilerplate, quote from Jordi/Ben) vs partner provides
+- Asset checklist: EEZ provides (logo, boilerplate, quote from Jordi/Armagan) vs partner provides
 
 ### Event Content (recaps, side event posts, live coverage)
 - Recap: hook (what happened), 2–3 key moments, one quote if available, CTA/link
@@ -138,12 +138,12 @@ When EEZ joins an ecosystem-wide campaign as a QT participant:
 
 ## Output
 
-All drafts saved to `outputs/drafts/alliance-outreach-[partner]-[mode]-[date].md`. Never sent directly — always requires Ben's go-ahead.
+All drafts saved to `outputs/drafts/alliance-outreach-[partner]-[mode]-[date].md`. Never sent directly — always requires Armagan's go-ahead.
 
 ## Rules
 
 - No em dashes. No "excited to announce." No "leverage" as a verb. Active voice.
-- British English when writing as Ben.
+- British English when writing as Armagan.
 - Always check `data/partners.yaml` for partner's preferred channel and contact before drafting.
 - Never invent partner quotes or commitments. Use `[PLACEHOLDER — confirm with partner]` if uncertain.
 - Never borrow the partner's campaign language. Find EEZ's position in EEZ's words.
