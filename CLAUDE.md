@@ -73,10 +73,11 @@ If the answer needs more than one row, do them in parallel and synthesise.
 
 When the request is non-trivial, hand off to a specialist subagent in `.claude/agents/`:
 
-- **GIP drafting or governance writing** → use the `gip-authoring` skill plus the `governance-analyst` subagent.
-- **Partner outreach, briefs, co-marketing** → use the `partner-brief` skill plus the `partner-scout` subagent.
+- **GIP drafting or governance writing** → use the `gip-authoring` skill.
+- **Partner outreach, check-ins, co-marketing, X threads, event content** → use the `alliance-outreach` skill.
+- **Builder wanting to integrate EEZ, use case qualification, path recommendation** → use the `builder-enablement` skill.
+- **Competitive landscape, L2 interop intel, weekly brief** → use the `ecosystem-intel` skill (requires live web search).
 - **Tokenomics or economic-model questions** → `tokenomics-modeler` subagent.
-- **External-facing comms, social posts, Slack/email drafts** → `comms-writer` subagent.
 - **Technical explanation of EEZ or Gnosis products** → `technical-explainer` subagent.
 
 For simple Q&A, answer directly using the knowledge map above.
