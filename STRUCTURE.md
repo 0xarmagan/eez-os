@@ -72,8 +72,11 @@ eez-agent/
 │   └── routing.md
 │
 ├── skills/                   ← EEZ-specific Claude skills
+│   ├── alliance-outreach/
+│   ├── builder-enablement/
+│   ├── content-ingestion/
+│   ├── ecosystem-intel/
 │   └── gip-authoring/
-│       └── SKILL.md
 │
 ├── templates/                ← Reusable content templates
 │   └── partner-outreach-email.md
@@ -246,7 +249,7 @@ Folders are named by **purpose** (community-events, technical-deep-dives, planni
 | Personas | 7 | ✅ Complete |
 | Templates | 1 | 🚧 Minimal |
 | Workflows | 2 | ✅ Growing |
-| Skills | 2 (GIP, partner-brief) | ✅ Functional |
+| Skills | 5 (GIP, alliance-outreach, builder-enablement, ecosystem-intel, content-ingestion) | ✅ Functional |
 
 ---
 
