@@ -27,6 +27,12 @@ The people and teams building the Ethereum Economic Zone.
 **Expertise:** Real-time proving, zero-knowledge cryptography  
 **Organization:** Zisk (co-founder with others)
 
+### Armagan Ercan
+**Role:** EEZ Coordinator and comms lead  
+**Responsibility:** Alliance coordination, external communications, content, ecosystem relations  
+**Contact:** armagan.ercan@gnosis.io  
+**Note:** Armagan is EEZ's operational voice. The @EthEconomicZone account is operated by Armagan. For press, partnership, and alliance enquiries, contact Armagan directly.
+
 ---
 
 ## Supporting Organizations
@@ -217,10 +223,10 @@ The people and teams building the Ethereum Economic Zone.
 A: No. Gnosis is leading development, but EEZ is governed as a credibly neutral, open-source initiative with a Swiss non-profit entity.
 
 **Q: Can other L2s join EEZ?**  
-A: Yes. Arbitrum, Optimism, Polygon, or any L2 can implement EEZ. Gnosis is the first, but not the only.
+A: Yes. EEZ is an open-source framework — any team can build a zone by implementing the standard. No application, no approval required. The EEZ Alliance is a separate voluntary coordination layer for teams that want to participate in the broader ecosystem.
 
 **Q: Who decides EEZ governance?**  
-A: The 10 founding partners + Gnosis, through a transparent governance process (details TBD).
+A: EEZ is governed through a GnosisDAO process currently (GNO holders vote). The EEZ standard itself evolves through an EIP-equivalent community process — open to anyone building with EEZ. Full on-chain governance is Phase 3 work.
 
 ---
 
