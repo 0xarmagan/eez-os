@@ -419,6 +419,7 @@ Post-panel: Mirror synthesis essay within 3 days. Partner second-wave amplificat
 - `knowledge/reference/brand/active/eez-public-brief.md` — canonical public reference document for external inbound
 - `knowledge/reference/brand/active/eez-coalition-charter.md` — rules for what alliance partners can claim about EEZ
 - `knowledge/reference/brand/developing/eez-phase3-engagement.md` — Phase 3 Research Office cadence, EEZ Builder signal, engagement loop, tone transition trigger
+- `knowledge/reference/brand/developing/eez-research-office-ops.md` — Research Office internal operations guide: roles, quarterly checklist, output templates, builder cohort management
 - `knowledge/reference/brand/developing/visual-identity.md` — visual identity stub (post-DappCon)
 
 **Project folder (canonical copies):**

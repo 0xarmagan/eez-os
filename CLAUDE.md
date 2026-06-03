@@ -59,7 +59,8 @@ Every question routes through this table. Cached corpus first, live lookup secon
 | EEZ media coverage, podcasts, interviews | `knowledge/eez/kb/04-media-and-analysis/` | — | All |
 | EEZ research, proposals, community Q&A | `knowledge/eez/kb/05-research-materials/`, `knowledge/eez/sources/` | EEZ research repo (GitHub) | All |
 | EEZ audience personas | `personas/eez-audience-personas.md` | — | All |
-| EEZ-specific brand, boilerplate, media kit | `knowledge/reference/brand/eez-*.md` | — | All |
+| EEZ brand strategy and explanation | `knowledge/reference/brand/active/eez-brand-strategy.md`, `knowledge/reference/brand/active/eez-brand-explained.md` | — | All |
+| EEZ brand guardrails, boilerplate, media kit | `knowledge/reference/brand/reference/eez-guardrails.md`, `knowledge/reference/brand/reference/eez-boilerplate.md`, `knowledge/reference/brand/developing/eez-media-kit.md` | — | All |
 | Gnosis products | `knowledge/gnosis/products/*.md` | gnosis.io, product GitHub | All |
 | GnosisDAO governance, GIP process | `knowledge/gnosis/dao/governance-hub.md`, `knowledge/gnosis/dao/moderation-guide.md` | forum.gnosis.io, Snapshot | All |
 | GIP status, votes, proposals | `data/gips.yaml` | Snapshot API, forum | All (public); internal commentary internal-only |

@@ -69,13 +69,11 @@ eez-agent/
     └── approved/             # Finalized, human-reviewed
 ```
 
-## Open design decisions
+## Design decisions
 
-- **Source of truth for partners and GIPs** — repo YAML, Notion, or live Snapshot/forum?
-- **Public vs private repo** — affects whether the corpus can include unredacted partner contacts and internal strategy.
-- **Output review gate** — every external-facing artifact through human review, or some commands ship directly?
-
-These are flagged in the original plan and need confirmation before live integrations are wired.
+- **Source of truth for partners** — repo YAML (GIPs removed from scope).
+- **Repo visibility** — public. Unredacted partner contacts and internal strategy stay out of this repo.
+- **Output review gate** — all external-facing artifacts require manual approval by Armagan before publishing.
 
 ## Owner
 
