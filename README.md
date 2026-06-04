@@ -25,6 +25,20 @@ EEZ is an open-source framework. Any team that implements the EEZ technical stan
 
 The Alliance is a voluntary coordination layer, not a prerequisite for zone participation. What EEZ governs is the standard itself, via an EIP-equivalent process for spec changes.
 
+## Using this agent
+
+**Requirements:** [Claude Code](https://claude.ai/code) and a Claude account.
+
+```bash
+git clone https://github.com/0xarmagan/eez-os
+cd eez-os
+claude
+```
+
+`CLAUDE.md` activates automatically. The agent runs persona detection on the first message and scopes its responses accordingly.
+
+**Access is granted by repo owner.** Default persona for new users is `builder` — public EEZ technical material only. Alliance partners get `partner` scope on request.
+
 ## What this repo is
 
 - `CLAUDE.md` — agent identity and operating manual
