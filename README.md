@@ -19,6 +19,24 @@ A Claude Code agent for the **Ethereum Economic Zone (EEZ)**, the **EEZ Alliance
 
 **Alliance:** 10 founding members (Aave, Safe, Flashbots, CoW Swap, Nethermind, Centrifuge, Titan, Beaver Build, Monerium, xStocks). Open to any rollup that meets the finality and commitment rules.
 
+## Governance
+
+**EEZ standard governance:**
+- EEZ is an open-source framework. Any team that implements the EEZ technical standard can build a zone — no application, no committee approval.
+- The Alliance is a voluntary coordination layer, not a prerequisite for zone participation.
+- What EEZ does govern: the standard itself, via an EIP-equivalent process for spec changes.
+- Current stewardship runs through GnosisDAO (Snapshot, off-chain). Full on-chain governance is a later phase.
+
+**GnosisDAO governance (GIP lifecycle):**
+1. Idea surfaced on forum or Discord
+2. Draft formalised using the GIP template
+3. Phase 1: community discussion on forum
+4. Phase 2: temperature check (informal poll)
+5. Phase 3: Snapshot vote (75,000 GNO quorum)
+6. On-chain execution via Safe / governance contracts (where required)
+
+Live governance state (active votes, forum threads) is always fetched from Snapshot and forum.gnosis.io, not from cache.
+
 ## What this repo is
 
 - `CLAUDE.md` — agent identity and operating manual
