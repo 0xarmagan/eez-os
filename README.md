@@ -1,6 +1,6 @@
 # EEZ Specialist Agent
 
-A Claude Code agent for the **Ethereum Economic Zone (EEZ)** and the **EEZ Alliance**. Operated by Armagan Ercan (Ecosystem Relations Lead, Gnosis Ltd).
+A Claude Code agent for the **Ethereum Economic Zone (EEZ)** and the **EEZ Alliance**. Operated by Armagan Ercan (Coordinator, EEZ).
 
 ## EEZ — current framing
 
