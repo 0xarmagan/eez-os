@@ -1,80 +1,77 @@
 # EEZ Specialist Agent
 
-A Claude Code agent that serves as a specialist on the **Ethereum Economic Zone (EEZ)**, the **EEZ Alliance**, **GnosisDAO governance**, and the seven **Gnosis products**.
+A Claude Code agent for the **Ethereum Economic Zone (EEZ)**, the **EEZ Alliance**, **GnosisDAO governance**, and Gnosis products. Operated by Armagan Ercan (Ecosystem Relations Lead, Gnosis Ltd).
 
-## What this is
+## EEZ — current framing
 
-A repo where:
-- `CLAUDE.md` is the agent's identity and operating manual
-- `knowledge/` is the cached corpus (the agent's long-term memory)
-- `data/` holds structured situational awareness (partners, GIPs, KPIs)
-- `skills/` and `.claude/` hold specialised capabilities
-- `personas/` defines who the agent is talking to and what they can see
-- `integrations/` documents live data sources (Snapshot, forum, Notion)
-- `outputs/` is where drafts land before human review
+**Thesis:** Ethereum has a fragmentation problem, not a scaling problem. Every L2 that launched with its own sequencer and bridge became a walled garden. EEZ activates Ethereum as a unified economic operating system.
+
+**How it works:**
+- L2s publish transaction data and validity proofs directly to Ethereum L1
+- A **composer** aggregates cross-chain execution tables and settles them atomically on L1
+- No bridges, no multisig upgrades, no trusted relayers — Ethereum's security model applies end to end
+
+**Key architectural points:**
+- EEZ does not impose a universal block cadence. Each chain defines its own block structure. EEZ only requires a synchronisation/finality point for the composable state transition.
+- Based rollups and centralised-sequencer rollups can both participate. The integration path differs; the eligibility does not.
+- Finality is required for atomic composability, but EEZ does not prescribe the proving mechanism. Each chain and its users decide what constitutes finality (ZK, TEE, validator committee, or combination).
+- Composer fee market is an open design space — payment can be an L1 fee, L2 fee, direct payment, or private agreement.
+
+**Alliance:** 10 founding members (Aave, Safe, Flashbots, CoW Swap, Nethermind, Centrifuge, Titan, Beaver Build, Monerium, xStocks). Open to any rollup that meets the finality and commitment rules.
+
+## What this repo is
+
+- `CLAUDE.md` — agent identity and operating manual
+- `knowledge/` — cached corpus (EEZ thesis, technical spec, media, alliance, Gnosis products)
+- `data/` — structured YAML (partners, GIPs)
+- `skills/` — five canonical skills (see below)
+- `personas/` — three access scopes with routing logic
+- `outputs/` — drafts land here; all external artifacts require human review before publishing
+
+## Skills
+
+| Skill | Purpose |
+|---|---|
+| `alliance-outreach` | Partner check-ins, co-marketing, event content, X threads |
+| `builder-enablement` | Integration qualification and path recommendations |
+| `content-ingestion` | Ingesting new sources into the knowledge base |
+| `ecosystem-intel` | Competitive landscape, L2 interop intel, weekly brief |
+| `gip-authoring` | GnosisDAO governance proposals, lifecycle management |
 
 ## Personas
 
-The agent serves three:
-1. **Internal** — Armagan Ercan (Ecosystem Relations Lead) and the wider Gnosis team. Full corpus access.
-2. **Partner** — EEZ Alliance member. Public + their own record.
-3. **Builder** — External developer or researcher. Public material only.
+1. **Internal** — Full corpus access including partner status, draft GIPs, internal strategy.
+2. **Partner** — Co-marketing context, public messaging, their own record only.
+3. **Builder** — Public technical material only.
 
-Persona detection is the first action on every conversation. See `personas/routing.md`.
+Persona detection runs first on every conversation. Default fallback: `builder` (least-privilege). See `personas/routing.md`.
 
-## Hybrid sourcing
+## Sourcing model
 
-Cached corpus first, live lookup second. Live wins for governance state (Snapshot, forum), cached wins for positioning, voice, and partner relationships. See `knowledge/reference/sourcing-policy.md`.
-
-## Build sequence (recommended)
-
-1. **Week 1** — `CLAUDE.md`, EEZ knowledge, product corpus (this repo's starting state)
-2. **Week 2** — Skills and templates
-3. **Week 3** — Subagents and slash commands
-4. **Week 4** — Live integrations (Snapshot, forum, Notion, Dune)
+Cached corpus first, live lookup second. Live wins for governance state (Snapshot, forum). Cached wins for positioning, voice, and partner relationships.
 
 ## Repo structure
 
-**Full navigation guide:** See `STRUCTURE.md` for detailed directory map with use-case routing.
-
 ```
 eez-agent/
-├── CLAUDE.md                 # Identity + operating manual
-├── README.md                 # This file
-├── STRUCTURE.md              # Complete navigation guide
+├── CLAUDE.md
+├── README.md
+├── STRUCTURE.md              # Full navigation guide
 ├── .claude/
-│   ├── commands/             # Slash commands
-│   ├── agents/               # Subagents
-│   └── hooks/                # Pre/post-tool hooks
+│   └── commands/             # Slash commands
 ├── personas/                 # Internal / partner / builder + routing
 ├── knowledge/
-│   ├── eez/                  # EEZ thesis, comms, alliance, technical spec
-│   ├── gnosis/
-│   │   ├── products/         # 7 product files
-│   │   └── dao/              # Governance hub, moderation, crisis response
-│   ├── ecosystem/            # Wider L2 / Ethereum landscape
-│   ├── reference/            # Style guide, stakeholder map, sourcing policy
-│   └── _meta/                # Corpus manifest, freshness TTLs
-├── skills/                   # GIP authoring, partner brief, governance analysis, etc.
+│   ├── eez/                  # Thesis, comms, alliance, technical spec, KB
+│   ├── gnosis/               # Products + DAO governance
+│   ├── ecosystem/            # L2 / Ethereum landscape
+│   └── reference/            # Style guide, brand, stakeholder map
+├── skills/                   # Five canonical skills
 ├── workflows/                # Multi-step playbooks
 ├── templates/                # Reusable artifact scaffolds
-├── data/                     # YAML data files (partners, GIPs, KPIs)
-├── integrations/             # MCP / API connection notes
-├── docs/                     # Event summaries & transcripts (archived)
-└── outputs/                  # Organized by type
-    ├── drafts/               # Work-in-progress materials
-    │   ├── community-events/      # Calls, scripts, moderator notes
-    │   ├── technical-deep-dives/  # Architecture, proving, explanations
-    │   └── planning-reference/    # Governance, roadmaps, tokenomics
-    └── approved/             # Finalized, human-reviewed
+├── data/                     # partners.yaml, gips.yaml
+├── docs/                     # Event summaries & transcripts
+└── outputs/
+    └── drafts/               # Work-in-progress (gitignored)
 ```
 
-## Design decisions
-
-- **Source of truth for partners** — repo YAML (GIPs removed from scope).
-- **Repo visibility** — public. Unredacted partner contacts and internal strategy stay out of this repo.
-- **Output review gate** — all external-facing artifacts require manual approval by Armagan before publishing.
-
-## Owner
-
-- **Repo owner:** Armagan Ercan (Ecosystem Relations Lead, Gnosis Ltd)
+All external-facing artifacts require Armagan's review before publishing.
