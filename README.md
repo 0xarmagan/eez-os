@@ -1,6 +1,6 @@
 # EEZ Specialist Agent
 
-A Claude Code agent for the **Ethereum Economic Zone (EEZ)**, the **EEZ Alliance**, **GnosisDAO governance**, and Gnosis products. Operated by Armagan Ercan (Ecosystem Relations Lead, Gnosis Ltd).
+A Claude Code agent for the **Ethereum Economic Zone (EEZ)** and the **EEZ Alliance**. Operated by Armagan Ercan (Ecosystem Relations Lead, Gnosis Ltd).
 
 ## EEZ — current framing
 
@@ -21,21 +21,9 @@ A Claude Code agent for the **Ethereum Economic Zone (EEZ)**, the **EEZ Alliance
 
 ## Governance
 
-**EEZ standard governance:**
-- EEZ is an open-source framework. Any team that implements the EEZ technical standard can build a zone — no application, no committee approval.
-- The Alliance is a voluntary coordination layer, not a prerequisite for zone participation.
-- What EEZ does govern: the standard itself, via an EIP-equivalent process for spec changes.
-- Current stewardship runs through GnosisDAO (Snapshot, off-chain). Full on-chain governance is a later phase.
+EEZ is an open-source framework. Any team that implements the EEZ technical standard can build a zone — no application, no committee approval.
 
-**GnosisDAO governance (GIP lifecycle):**
-1. Idea surfaced on forum or Discord
-2. Draft formalised using the GIP template
-3. Phase 1: community discussion on forum
-4. Phase 2: temperature check (informal poll)
-5. Phase 3: Snapshot vote (75,000 GNO quorum)
-6. On-chain execution via Safe / governance contracts (where required)
-
-Live governance state (active votes, forum threads) is always fetched from Snapshot and forum.gnosis.io, not from cache.
+The Alliance is a voluntary coordination layer, not a prerequisite for zone participation. What EEZ governs is the standard itself, via an EIP-equivalent process for spec changes.
 
 ## What this repo is
 
@@ -54,7 +42,6 @@ Live governance state (active votes, forum threads) is always fetched from Snaps
 | `builder-enablement` | Integration qualification and path recommendations |
 | `content-ingestion` | Ingesting new sources into the knowledge base |
 | `ecosystem-intel` | Competitive landscape, L2 interop intel, weekly brief |
-| `gip-authoring` | GnosisDAO governance proposals, lifecycle management |
 
 ## Personas
 
