@@ -44,18 +44,23 @@ claude
 - `CLAUDE.md` — agent identity and operating manual
 - `knowledge/` — cached corpus (EEZ thesis, technical spec, media, alliance, Gnosis products)
 - `data/` — structured YAML (partners, GIPs)
-- `skills/` — five canonical skills (see below)
+- `skills/` — seven canonical skills (see below)
 - `personas/` — three access scopes with routing logic
 - `outputs/` — drafts land here; all external artifacts require human review before publishing
 
 ## Skills
 
-| Skill | Purpose |
-|---|---|
-| `alliance-outreach` | Partner check-ins, co-marketing, event content, X threads |
-| `builder-enablement` | Integration qualification and path recommendations |
-| `content-ingestion` | Ingesting new sources into the knowledge base |
-| `ecosystem-intel` | Competitive landscape, L2 interop intel, weekly brief |
+| Skill | Purpose | Effort |
+|---|---|---|
+| `alliance-outreach` | Partner check-ins, co-marketing, event content, X threads | high |
+| `builder-enablement` | Integration qualification and path recommendations | high |
+| `content-ingestion` | Ingesting new sources into the knowledge base | medium |
+| `content-learning` | Surfaces recurring errors in approved drafts; generates skill improvement suggestions | high |
+| `ecosystem-intel` | Competitive landscape, L2 interop intel, weekly brief | high |
+| `gip-authoring` | GnosisDAO Improvement Proposal drafting and forum post formatting | high |
+| `technical-accuracy` | Pre-publish check against 5 technical distinctions that must not be blurred | high |
+
+All skills run on `claude-sonnet-4-6`. Each skill declares its model and effort level in `## Model`, and carries `## Governance` fields (Owner, Evals, Retirement trigger).
 
 ## Personas
 
