@@ -3,6 +3,12 @@
 # Visibility: internal persona only. Never expose to partner or builder personas.
 # Last updated: April 2026
 
+# ai_context:
+#   use_when: drafting alliance outreach, co-marketing copy, partner briefs, or onboarding materials.
+#   skills: alliance-outreach (primary), builder-enablement (partner integration context).
+#   does_not_cover: live engagement status (check Notion alliance tracker), contact details beyond handle,
+#     technical integration depth, or which partners have signed formal agreements.
+
 partners:
   - name: Linea
     status: founding
@@ -13,6 +19,10 @@ partners:
     notes: |
       Recorded at EthCC booth. Featured in partner intro video.
       Logo wall partner.
+    ai_context: >
+      Use when positioning EEZ alongside a major L2 brand — Linea signals Tier-1 chain credibility.
+      Outreach mode: co-marketing check-in. Do not conflate with Metis; Linea = ConsenSys-backed
+      flagship L2, not a decentralised-sequencer story.
 
   - name: GrowThePie
     status: founding
@@ -22,6 +32,10 @@ partners:
     sentiment: positive
     notes: |
       Recorded at EthCC booth. Strong analytics narrative fit.
+    ai_context: >
+      Use when the EEZ narrative needs third-party data credibility or on-chain analytics framing.
+      Outreach mode: co-marketing check-in. Do not conflate with Dune or other dashboards;
+      GrowThePie specialises in cross-chain comparative metrics.
 
   - name: Nethermind
     status: founding
@@ -31,6 +45,10 @@ partners:
     sentiment: positive
     notes: |
       Recorded at EthCC booth. Core infra credibility.
+    ai_context: >
+      Use when EEZ needs core client / research credibility signal, especially for technical audiences.
+      Outreach mode: co-marketing check-in. Do not conflate with Gateway.fm; Nethermind = client
+      research, not L2 provisioning or bridge work.
 
   - name: Octant
     status: founding
@@ -40,6 +58,10 @@ partners:
     sentiment: positive
     notes: |
       Recorded at EthCC booth. Public-goods funding angle.
+    ai_context: >
+      Use when framing EEZ's value to public-goods or retroactive funding audiences.
+      Outreach mode: co-marketing check-in. Do not conflate with Revoke.cash (GIP-149) or
+      other public-goods grantees; Octant is a GLM-staking funding protocol, not a product.
 
   - name: Centrifuge
     status: founding
@@ -49,6 +71,11 @@ partners:
     sentiment: positive
     notes: |
       Recorded at EthCC booth. RWA narrative fit.
+    ai_context: >
+      Use when positioning EEZ for real-world asset or institutional DeFi audiences;
+      Centrifuge is the canonical RWA credibility signal. Outreach mode: co-marketing check-in.
+      Do not conflate with Enterprise Ethereum Alliance — Centrifuge is a live DeFi protocol,
+      not an enterprise standards body.
 
   - name: Blockscout
     status: founding
@@ -58,6 +85,10 @@ partners:
     sentiment: positive
     notes: |
       Recorded at EthCC booth. Existing GnosisDAO relationship via GIP-144 SLA.
+    ai_context: >
+      Use when EEZ needs explorer / infra credibility or when GIP-144 context is relevant.
+      Outreach mode: warm check-in (existing GnosisDAO relationship). Do not conflate with
+      GrowThePie; Blockscout = chain explorer and bridge indexer, not cross-chain analytics.
 
   - name: Balancer Labs
     status: prospective
@@ -69,6 +100,10 @@ partners:
       Liquidity fragmentation is the biggest structural problem they see.
       Sync composability enables single-deployment pools.
     expertise: AMM/DEX (V3 Boosted Pools, hooks, ERC4626), DeFi partner network (Aave, Lido)
+    ai_context: >
+      Use when drafting first-contact outreach: lead with sync composability solving
+      single-deployment pool liquidity, not general EEZ framing. Do not conflate with
+      Metis sequencer or Four Pillars research angle; Balancer is a live AMM protocol.
 
   - name: Four Pillars
     status: prospective
@@ -79,6 +114,11 @@ partners:
     expressed_interest_date: 2026-04-03
     why: EEZ restores unified composable economic system; institutional bridge.
     expertise: Korean crypto research house, 500+ research pieces, Asia distribution
+    ai_context: >
+      Use when planning Asia distribution or institutional-research amplification; first-contact
+      outreach should emphasise EEZ's unified economic thesis and research publication opportunities.
+      Do not conflate with Enterprise Ethereum Alliance — Four Pillars is a research media brand,
+      not an enterprise standards body.
 
   - name: Enterprise Ethereum Alliance
     status: prospective
@@ -89,6 +129,10 @@ partners:
     expressed_interest_date: 2026-04-03
     why: Perfect model for enterprise adoption.
     expertise: Enterprise/institutional specs and use cases
+    ai_context: >
+      Use when targeting enterprise or institutional adoption narratives; first-contact outreach
+      should frame EEZ as the execution layer for enterprise Ethereum specs. Do not conflate
+      with Centrifuge (live RWA protocol) or Four Pillars (research media).
 
   - name: Metis Foundation
     status: prospective
@@ -99,6 +143,11 @@ partners:
     expressed_interest_date: 2026-04-03
     why: Sync composability + decentralised sequencer + AI = first-mover edge.
     expertise: Decentralised sequencer (battle-tested), AI-native layer, METIS utility
+    ai_context: >
+      Use when the EEZ pitch needs a decentralised-sequencer or AI-native chain angle;
+      first-contact outreach should highlight first-mover positioning on sync composability
+      plus decentralised sequencer. Do not conflate with Linea (ConsenSys L2) or
+      Gateway.fm (L2 provisioning); Metis brings a battle-tested sequencer story.
 
   - name: Gateway.fm
     status: prospective
@@ -109,6 +158,11 @@ partners:
     expressed_interest_date: 2026-04-02
     why: Gnosis/ZisK project context, liquidity unification needed.
     expertise: L2 stack E2E development, bridges, agglayer, L2 provisioning
+    ai_context: >
+      Use when the EEZ narrative involves L2 deployment infrastructure or agglayer bridge work;
+      first-contact outreach should reference ZisK project context and liquidity unification.
+      Do not conflate with Nethermind (client research) or Metis (decentralised sequencer);
+      Gateway.fm = full-stack L2 provisioning and bridge tooling.
 
 # Onboarding pipeline summary
 pipeline:

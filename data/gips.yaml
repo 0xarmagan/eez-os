@@ -3,6 +3,13 @@
 # Last updated: April 2026
 # Live source of truth: forum.gnosis.io and Snapshot
 
+# ai_context:
+#   use_when: drafting governance digests, GIP references in partner briefs, or gip-authoring workflow.
+#     Use for structural context (status, themes, relations) and engagement framing.
+#   use_live_data_when: you need current vote counts, new posts, or whether a GIP has moved phase
+#     since April 2026 — this file's status fields are point-in-time snapshots.
+#   does_not_cover: full proposal text, vote tallies, delegate reasoning, or GIPs filed after April 2026.
+
 gips:
   - id: GIP-122
     title: Gnosis VPN funding (HOPR)
@@ -12,6 +19,10 @@ gips:
       $4.8M HOPR token investment over two years plus 500 GNO for node runner
       incentives. Funds the build phase following the GIP-98 PoC.
     related: [GIP-98, GIP-129]
+    ai_context: >
+      Relevant when contextualising Gnosis VPN investment history or the HOPR relationship;
+      use alongside GIP-129 for full legal+funding picture. Does not cover ongoing node-runner
+      performance or HOPR token price mechanics.
 
   - id: GIP-129
     title: Gnosis VPN legal wrapper (Seldon Inc)
@@ -20,6 +31,10 @@ gips:
     summary: |
       Establishes Seldon Inc as a standalone entity to ensure Gnosis VPN
       has the legal and technical scaffolding to reach the global market.
+    ai_context: >
+      Use when the legal structure of Gnosis VPN is relevant (entity, jurisdiction, market access);
+      pair with GIP-122 for the full funding context. Does not cover product roadmap or
+      node-runner incentive design.
 
   - id: GIP-141
     title: Strategic Visual Adoption package
@@ -27,6 +42,10 @@ gips:
     posts: 18
     category: 21
     themes: [DAO comms value, metrics, anything-gets-funded criticism, governance quality]
+    ai_context: >
+      Use in governance digests or GIP-authoring when the topic is DAO comms standards or
+      governance quality debate. Does not cover product funding or treasury allocation;
+      this is a meta-governance discussion about what the DAO funds and how it measures value.
 
   - id: GIP-144
     title: Blockscout SLA renewal
@@ -36,6 +55,9 @@ gips:
     summary: |
       Broadly viewed as no-brainer infra renewal; emphasises explorer
       usage growth and universal bridge indexer work.
+    ai_context: >
+      Use when Blockscout's ongoing DAO funding relationship is relevant (partner briefs, infra
+      narrative). Does not cover Blockscout's commercial roadmap or non-Gnosis chain deployments.
 
   - id: GIP-145
     title: Futarchy pilot
@@ -43,6 +65,10 @@ gips:
     posts: 12
     category: 21
     themes: [futarchy incentives, liquidity, oracle risk, Kleros futarchy safeguard]
+    ai_context: >
+      Use in governance-design or innovation-narrative contexts; relevant when discussing
+      GnosisDAO's governance experimentation posture. Does not cover prediction-market
+      product details or Kleros's broader arbitration work.
 
   - id: GIP-146
     title: NAV per GNO
@@ -53,11 +79,19 @@ gips:
     engagement_signal: |
       Low-reply, high-leverage. Good place to add specifics on methodology
       (what to count, how to value VC positions).
+    ai_context: >
+      Use when framing GNO intrinsic-value or treasury-transparency arguments; the low-reply
+      signal makes it a good forum for substantive methodology input. Does not cover GNO
+      staking mechanics or Gnosis Pay economics (see GIP-XX-pay-staking).
 
   - id: GIP-148
     title: Treasury manager mandate
     status: passed
     summary: Treasury manager transition and execution expectations.
+    ai_context: >
+      Use as background when treasury governance structure or manager accountability is relevant;
+      pairs with GIP-146 for the full treasury picture. Does not cover specific asset allocation
+      decisions or DeFi yield strategies.
 
   - id: GIP-149
     title: Revoke.cash support
@@ -68,12 +102,20 @@ gips:
     engagement_signal: |
       Low-reply, high-leverage. Good spot for delegates to state how they
       weigh public-good safety vs treasury spend.
+    ai_context: >
+      Use in governance digests when covering public-goods security funding decisions;
+      good context for delegate positioning on safety vs spend trade-offs. Does not
+      cover Revoke.cash product features or non-Gnosis chain support.
 
   - id: GIP-XX-pay-staking
     title: Native GNO staking for Gnosis Pay card holders
     status: draft
     posts: 3
     themes: [GNO staking economics, Gnosis Pay UX, treasury-funded yield]
+    ai_context: >
+      Use when bridging Gnosis Pay UX to GNO staking or token-utility narratives; still
+      draft, so treat as directional signal not confirmed policy. Does not cover GNO
+      validator staking or general treasury buyback logic (see GIP-146).
 
 # In-flight GIPs being shepherded by Ben
 in_flight:

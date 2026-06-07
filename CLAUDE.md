@@ -137,3 +137,15 @@ When in doubt, draft to `outputs/drafts/` and surface what needs human review.
 - **Flag uncertainty explicitly.** Say "I don't have this in the corpus" rather than guessing.
 - **Default to drafts, not finals.** Every external-facing artifact is a draft until Armagan says otherwise.
 - **Keep responses tight.** Mobile-first; lead with the answer; expand only when asked.
+
+## Memory
+
+Load `memory/MEMORY.md` at the start of any MEDIUM+ task involving partner content, external copy, or technical claims. The three memory files capture confirmed patterns and recurring failures — they supplement the knowledge base, not replace it.
+
+| File | Load when |
+|---|---|
+| `memory/eez-voice-patterns.md` | Any external-facing content draft |
+| `memory/technical-accuracy-watchlist.md` | Any draft touching finality, bridges, ZK, or L2 framing |
+| `memory/partner-engagement-patterns.md` | Any partner outreach or co-marketing task |
+
+Memory is updated by the `content-learning` skill after review. Do not update memory files mid-task — surface corrections to Armagan first.
