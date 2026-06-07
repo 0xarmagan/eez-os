@@ -113,3 +113,12 @@ Save to `outputs/drafts/content-learning-[YYYY-MM-DD].md` and print to screen.
 - If no approved output exists yet, output: "No approved output to analyse yet — run after first 5 approved pieces."
 - Save the report to `outputs/drafts/content-learning-[YYYY-MM-DD].md`. Never save to `outputs/approved/` — the report itself is a draft.
 - When suggesting rule additions, write the exact text that would go into the skill file, not a vague description. Make the suggestion copy-pasteable.
+
+## Model
+- **Model:** claude-sonnet-4-6
+- **Effort:** high
+
+## Governance
+- **Owner:** unassigned
+- **Evals:** none defined
+- **Retirement trigger:** unused for 90 days, or superseded by a more capable skill

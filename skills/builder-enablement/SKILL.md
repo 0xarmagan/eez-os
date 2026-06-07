@@ -157,3 +157,12 @@ Regardless of use case or path:
 - Never oversell. If the project is a poor fit, say so and explain why.
 - Never invent technical capabilities not in the KB.
 - Always disclose the four constraints above before a builder commits to a path.
+
+## Model
+- **Model:** claude-sonnet-4-6
+- **Effort:** high
+
+## Governance
+- **Owner:** unassigned
+- **Evals:** none defined
+- **Retirement trigger:** unused for 90 days, or superseded by a more capable skill

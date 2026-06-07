@@ -149,3 +149,12 @@ All drafts saved to `outputs/drafts/alliance-outreach-[partner]-[mode]-[date].md
 - Never borrow the partner's campaign language. Find EEZ's position in EEZ's words.
 - The two-asks pattern (brand QT + personal note from founder) works well for launch amplification.
 - When voice files are empty, fall back to `knowledge/eez/01-comms-framework.md` and `knowledge/reference/messaging-and-narrative.md`.
+
+## Model
+- **Model:** claude-sonnet-4-6
+- **Effort:** high
+
+## Governance
+- **Owner:** unassigned
+- **Evals:** none defined
+- **Retirement trigger:** unused for 90 days, or superseded by a more capable skill

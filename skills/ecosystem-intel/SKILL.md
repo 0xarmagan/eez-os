@@ -89,3 +89,12 @@ Structured brief in terminal. Optionally save to `outputs/drafts/ecosystem-intel
 - Be specific on threat signals. "Superchain is a threat" is not useful. "Superchain announced shared sequencing with 8 chains and framed it as 'atomic composability' in their EthCC keynote" is.
 - The EEZ response column is the actionable output — don't skip it.
 - Flag anything that requires a strategic decision rather than a talking-point response.
+
+## Model
+- **Model:** claude-sonnet-4-6
+- **Effort:** high
+
+## Governance
+- **Owner:** unassigned
+- **Evals:** none defined
+- **Retirement trigger:** unused for 90 days, or superseded by a more capable skill

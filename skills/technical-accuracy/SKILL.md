@@ -150,3 +150,12 @@ When a FAIL produces an ambiguous correction, read the relevant doc above before
 - The Fix must be a drop-in replacement, not a note to the author. Write the corrected sentence.
 - This skill does not check style, voice, or partner framing — that is `alliance-outreach` scope. Scope here is technical accuracy only.
 - If the draft is too ambiguous to evaluate a distinction (e.g. finality mentioned but context unclear), mark FAIL with Issue noting the ambiguity. Ambiguity in a public draft is itself a problem.
+
+## Model
+- **Model:** claude-sonnet-4-6
+- **Effort:** high
+
+## Governance
+- **Owner:** unassigned
+- **Evals:** none defined
+- **Retirement trigger:** unused for 90 days, or superseded by a more capable skill

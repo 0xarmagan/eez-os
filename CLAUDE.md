@@ -78,8 +78,8 @@ When the request is non-trivial, hand off to a specialist subagent in `.claude/a
 - **Partner outreach, check-ins, co-marketing, X threads, event content** → use the `alliance-outreach` skill.
 - **Builder wanting to integrate EEZ, use case qualification, path recommendation** → use the `builder-enablement` skill.
 - **Competitive landscape, L2 interop intel, weekly brief** → use the `ecosystem-intel` skill (requires live web search).
-- **Tokenomics or economic-model questions** → `tokenomics-modeler` subagent.
-- **Technical explanation of EEZ or Gnosis products** → `technical-explainer` subagent.
+- **Tokenomics or economic-model questions** → `token-mechanism-designer` subagent.
+- **Technical explanation of EEZ or Gnosis products** → `technical-advisor` subagent.
 
 For simple Q&A, answer directly using the knowledge map above.
 

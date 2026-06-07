@@ -184,3 +184,12 @@ When the user says "approved", "looks good", "promote it", or similar:
 | Blog FAQ (technical post, forum discussion, research) | `kb/05-research-materials/` |
 
 Default: video → `kb/04-media-and-analysis/`, blog → `kb/06-reports/`. State your routing choice before promoting and allow the user to override.
+
+## Model
+- **Model:** claude-sonnet-4-6
+- **Effort:** medium
+
+## Governance
+- **Owner:** unassigned
+- **Evals:** none defined
+- **Retirement trigger:** unused for 90 days, or superseded by a more capable skill

@@ -78,3 +78,12 @@ Apply the style guide (`knowledge/reference/style-guide.md`):
 ## Templates
 
 See `templates/gip.md` for the boilerplate file.
+
+## Model
+- **Model:** claude-sonnet-4-6
+- **Effort:** high
+
+## Governance
+- **Owner:** unassigned
+- **Evals:** none defined
+- **Retirement trigger:** unused for 90 days, or superseded by a more capable skill
