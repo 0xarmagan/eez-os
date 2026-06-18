@@ -11,6 +11,7 @@ Primary source documents imported from the `gnosis-marketing` repo on 2026-04-26
 | `forum-post-and-commentary.md` | The L2 forum post and forum engagement commentary | Citing the public position; preparing forum replies |
 | `martin-l2-talk.md` | Transcript of Martin Köppelmann's original L2 talk | Quoting Martin; understanding the founding argument |
 | `dappcon-2026-eez-node-architecture.md` (+ `.png` diagram, `.pdf` 56-slide deck) | DAPPCon 2026 EEZ Workshop (Jordi Baylina): full deck digest + node-architecture diagram transcription + agent-mesh expert review | EEZ definition; proxy/Execution Table; 7 EEZ properties; chain types; the composer; ADSTF + ZisK proving pipeline; roadmap (incl. "Connecting Gnosis Chain"); node-software topology |
+| `dappcon-2026-realtime-proving-talk.md` | Jordi Baylina's spoken DAPPCon talk "Real-Time Proving and Synchronous Composability Between Rollups" (2026-06-16) — extracted key points | ZisK 1.0 alpha status; the EEZ proof (blob/ADSTF/L1-hash); cryptographic accumulator + zero-sum aggregation; ADSTF-adapter recursion trick; ~3s pipelining; validium data split; DA limitation |
 | `composability-proposal.md` | "Composability between rollups on Ethereum" proposal | Technical questions on synchronous composability |
 | `vitalik-preconfigs.md` | Vitalik's preconfigs writing relevant to the EEZ thesis | Sequencing/preconf questions; aligning with Vitalik's framing |
 | `open-questions-v1.md` | Earlier draft: Gnosis as L2 open questions | Historical context; tracking how positioning evolved |

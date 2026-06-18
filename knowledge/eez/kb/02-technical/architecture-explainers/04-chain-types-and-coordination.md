@@ -42,6 +42,8 @@ The condition is cross-chain reach. If a validium's transactions are to touch ot
 
 This keeps the validium's data-availability savings for its own internal activity, while still letting it join cross-chain flows when it chooses to. As with native rollups, joining is the chain's choice, and EEZ does not force a single data model on every participant.
 
+In the DAPPCon talk Jordi made the access split precise. To rebuild a validium's full state you need extra data from sources outside the blobs, which is the validium's own data-availability arrangement. To route calls to or from the validium, the composer needs access to that data, because it has to see the cross-chain effect to include it. Other chains connecting to the validium do not need the full validium state. They only need the interactions recorded in the blobs, the calls and returns that actually cross the boundary. So the heavier data requirement falls on the composer that connects the validium, not on every chain in the zone.
+
 ## Coordination methods: optimistic and pessimistic
 
 Cross-chain inclusion needs a way to keep the participating chains consistent while a cross-chain interaction is being assembled and proven. The deck names two methods. They sit on a liveness-versus-safety trade-off, and neither is universally better.

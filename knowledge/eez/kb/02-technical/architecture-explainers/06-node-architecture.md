@@ -82,6 +82,8 @@ The diagram is a correct topology sketch, not a finished specification. Several 
 
 **Composer economics.** The deck states openly that fee incentives for composers are undefined. Binding mode requires commitment, but cross-chain fee revenue is irregular, so rational operators might default to non-binding or optimistic behaviour in quiet periods. This is a named open question, not a design that has been settled.
 
+**Data availability dependence.** In the DAPPCon talk Jordi named data availability as a limitation. EEZ puts a lot of information into blobs, so the system depends on high Ethereum data availability, and EEZ's own throughput is bounded by how much L1 can carry. This is an external dependency on Ethereum scaling, not something EEZ resolves on its own.
+
 One thing that is *not* an open gap, despite how the diagram looks. The diagram shows a single `prover` box. That is a topology abstraction. EEZ is proof-system agnostic and multi-prover-capable. Each rollup sets its own threshold (an M-of-N value, one or more) on its manager contract, and the manager reverts if a submitted set of proof systems falls below that threshold. The protocol does not force a minimum of two. A rollup that wants stronger security configures two or more proving systems (for example Zisk plus SP1 plus a TEE), and that is the design intent. Do not read the single box as a single-prover design.
 
 EEZ is not live yet. The roadmap runs through smart-contract cleanup, documentation, a request for comments, an audit, the signature and Zisk proving systems, Composer 1.0, Chain Zero, and then connecting Gnosis Chain. The node architecture above is what operators are being built to run, not software you can run in production today.
