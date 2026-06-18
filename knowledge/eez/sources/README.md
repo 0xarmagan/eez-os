@@ -10,6 +10,7 @@ Primary source documents imported from the `gnosis-marketing` repo on 2026-04-26
 | `visual-identity.md` | Full EEZ visual system: logo, colour, typography, motion, taglines | Visual or brand-adjacent questions; tagline reference |
 | `forum-post-and-commentary.md` | The L2 forum post and forum engagement commentary | Citing the public position; preparing forum replies |
 | `martin-l2-talk.md` | Transcript of Martin Köppelmann's original L2 talk | Quoting Martin; understanding the founding argument |
+| `dappcon-2026-eez-node-architecture.md` (+ `.png`, cover `.pdf`) | EEZ node architecture sketch from DAPPCon 2026 (Jordi Baylina), with transcription + agent-mesh expert review | Node-software topology; sync/async block model; binding vs non-binding sequencers; prover/composer/L1 Builder flow |
 | `composability-proposal.md` | "Composability between rollups on Ethereum" proposal | Technical questions on synchronous composability |
 | `vitalik-preconfigs.md` | Vitalik's preconfigs writing relevant to the EEZ thesis | Sequencing/preconf questions; aligning with Vitalik's framing |
 | `open-questions-v1.md` | Earlier draft: Gnosis as L2 open questions | Historical context; tracking how positioning evolved |
