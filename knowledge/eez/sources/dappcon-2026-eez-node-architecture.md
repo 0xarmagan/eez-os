@@ -1,54 +1,101 @@
-# EEZ Node Architecture — Martin's DAPPCon Draft
+# EEZ Architecture — DAPPCon 2026 Workshop (Jordi Baylina)
 
-Source: **DAPPCon EEZ Workshop, 17 June 2026**, presented by Jordi Baylina (@jbaylina), co-branded Ethereum Economic Zone × ZisK VM. Hand-drawn architecture diagram ("Martin's Draw"). Treat as a **topology sketch from a primary technical source, not an implementation spec or canonical comms.** This is engineering-level founding material — quote as Jordi's/Martin's framing, not as approved EEZ messaging.
+Source: **DAPPCon EEZ Workshop, 17 June 2026**, presented by Jordi Baylina (@jbaylina), co-branded Ethereum Economic Zone × ZisK VM. Two assets, both engineering-level founding material — quote as Jordi's framing, not as approved EEZ comms.
 
 Assets in this directory:
-- `dappcon-2026-eez-node-architecture.png` — the diagram (dark canvas; transcription below is the readable version)
-- `dappcon-2026-eez-architecture-cover.pdf` — workshop title slide (cover only, no content slides)
+- `dappcon-2026-eez-architecture-cover.pdf` — **the full 56-slide workshop deck** (definition, properties, chain types, the composer, EEZ Trace / blob format, the ADSTF + ZisK proving pipeline, and the roadmap).
+- `dappcon-2026-eez-node-architecture.png` — Jordi's hand-drawn node-software topology ("Martin's Draw"). Transcription + expert review below.
 
 ---
 
-## Diagram transcription
+## Part 1 — The 56-slide deck
+
+### Core definition (sharper than the KB)
+> "EEZ proves the **combined execution of many rollups as a single, synchronous transaction**."
+
+Cross-chain interaction is a **normal Ethereum CALL → RETURN** between smart contracts on different chains (Chain 1 SmartContract A `CALL` Chain 2 SmartContract B, then `RETURN`). Not message passing, not a bridge.
+
+### The proxy / Execution Table mechanism
+On L1, the participating contracts exist as **proxies** (drawn with a `*`: `UserAA(*)`, `Whitelist(*)`, `DAO(*)`) of their real counterparts on the rollup (R2). The L1 `DAO(*)` proxy writes cross-chain calls/returns into an **Execution Table** on L1. This is the concrete form of "proxies, not bridges" — proxies are synchronous and share state.
+
+### EEZ Properties (canonical 7-point spec)
+1. Permissionless smart contract
+2. Not upgradable
+3. Roll-ups can opt-in / opt-out freely
+4. **Proof-system agnostic** — ZK based, TEE, or Multisig
+5. **Rollups are sovereign**, governed by a rollup smart contract — each defines its own rules, its own state transformation function, and its own accepted proving systems
+6. **Security warranted across rollups** — "the same security Ethereum provides to independent smart contracts calling each other"
+7. **Orthogonal to L1 pre-confirmations**
+
+### Chain types (each gets a slide)
+- **Custom native rollups** — own STF (WASM, RISCV, custom); cross-rollup interaction via normal Ethereum CALLs; ETH-as-native rollups can include ETH in CALLs; cross-rollup ETH transfers use rollup-level accounting maintained in L1; rollups are sovereign and define their own update mechanism; permissionless rollup creation.
+- **Based / Centralized Sequencer Rollups** — any centralized rollup is treated as a base rollup with all state transitions signed by the sequencer. The L2 sequencer must coordinate with the composer to include cross-chain txs. **Two coordination methods:** *optimistic = reorgs*; *pessimistic = locking (not necessarily the full chain)*.
+- **Validiums** — may omit self-chain-only TXs from blobs, but must provide that info or a coordination mechanism with composers if their TXs are to touch other chains.
+
+### The composer
+- Builds and sends the `postAndVerifyBatch` transaction/bundle.
+- **Anybody can be a composer** (permissionless).
+- **EEZ does not currently define an incentive mechanism** for routing fees to the composer — expects TXs to carry implicit/explicit reward so composers are incentivized to include them.
+- **EEZ does not currently define a public pool of crosschain TXs.**
+
+### Client model
+A node following a single L2 chain "should be able to build its state without synchronizing any other L2 (only L1 and his chain)."
+
+### The ZisK proving pipeline (the novel half, absent from the diagram)
+- **Action-Driven State Transition Function (ADSTF):** ACTION IN → INITIAL STATE → ADSTF → FINAL STATE / ACTION OUT / REVERT INFO.
+- **EEZ Trace / "the blob format"** — records each context switch (CALL and RETURN) between chains, including revert handling.
+- **Multi-prover enforced in the contract:** structures `ProofSystemBatchPerVerificationEntries`, `RollupIdWithProofSystems`, and `_fetchVkMatrix(...)` build a per-rollup **VK matrix**; `checkProofSystemsAndGetVkeys(...)` reverts with `InvalidProofSystemConfig()`. Confirms ≥2 proof systems per rollup is a hard requirement, not a default.
+- **Recursion chain:** ADSTF Adaptor (verifies a user-defined circuit VK) → **L1 Hash Builder** (blob commitment, starting/ending blob rollup state, L1 interactions, `RollupId → PS, VK`) → **Aggregation Circuit** (verifies 2 circuits, adds their accumulators) → **Final Circuit** (verifies root aggregation + L1 Hash builder, checks accumulator sum = 0) → **PLONK Circuit** (generates an easily on-chain-verifiable PLONK proof).
+- **Synchronous Composability = minimizing proof-generation latency:** Bundle Building (composer) and Proof Building run overlapped, total target **< 3s** (fits inside an L1 slot).
+
+### Roadmap (slide 55)
+1. Cleanup smart contract · 2. Cleanup documentation · 3. Request for comments · 4. Audit smart contracts · 5. Signature and Zisk proving system · 6. **Composer 1.0** · 7. **Chain Zero** · 8. **Connecting Gnosis Chain**.
+
+"Connecting Gnosis Chain" corroborates the Gnosis-L2/EEZ pivot; "Chain Zero" and "Composer 1.0" are named milestones.
+
+---
+
+## Part 2 — The node-architecture diagram ("Martin's Draw")
 
 ### Top — block / fork model
-- L1 timeline: `L1-100 → L1-101 → L1-102`, with "L1 block propagation".
-- **EEZ chain 1** block sequence containing: **async block**, **sync block 1**, **sync block 2**, **sync block preparation (chain split)**, **unused blocks**. Transactions classified as **tx independent of fork** vs **tx dependent of fork**. Note: *"only needed if L1↔L2 tx pending."*
-- **EEZ chain 2** and **EEZ chain 3** rows: normal blocks interleaved with dashed blocks marked **async**.
+- L1 timeline `L1-100 → L1-101 → L1-102` with "L1 block propagation".
+- **EEZ chain 1**: **async block**, **sync block 1/2**, **sync block preparation (chain split)**, **unused blocks**. Tx labeled **independent of fork** vs **dependent of fork**. Note: *"only needed if L1↔L2 tx pending."*
+- **EEZ chain 2 / chain 3** rows: normal blocks interleaved with dashed **async** blocks.
 
 ### Middle — binaries / components
-- **Binary 1 — `sequencer per chain`**: holds `sequencer / driver / eez-node` (*"if permissioned, key is here"*) → **engineAPI** (`builtBlock` / `forkChoiceUpdate`, flag: *sync block*) → `L2 execution client / EEZ reth`.
-- **Binary 2 — `composer`**: holds `orchestrator`, `L1 EL client` (with nested `inspector`), `crosschain-mempool (L1 and L2 tx)`, `mem-Pool (L2 only)`, and **"Propose settlement"** — *"take the last n blocks and create the 'postBatch' payload that can be submitted first to the prover and next on L1."* Receives `proposeBlock`.
-- **`prover`** (stacked): *"request: postBatch Data + potentially helper data (data streamed for prover to start early)"*; reads L1.
+- **Binary 1 — `sequencer per chain`**: `sequencer / driver / eez-node` (*"if permissioned, key is here"*) → **engineAPI** (`builtBlock` / `forkChoiceUpdate`, flag: *sync block*) → `L2 execution client / EEZ reth`.
+- **Binary 2 — `composer`**: `orchestrator`, `L1 EL client` (nested `inspector`), `crosschain-mempool (L1 and L2 tx)`, `mem-Pool (L2 only)`, and **"Propose settlement"** — *"take the last n blocks and create the 'postBatch' payload submitted first to the prover and next on L1."* Receives `proposeBlock`.
+- **`prover`** (stacked): *"request: postBatch Data + potentially helper data (streamed so the prover starts early)"*; reads L1.
 - Flow: `composer` —**submit bundle: (postBatch)(L1 user tx)**→ **`L1 Builder`** → **`L1`**.
-- **Followers**: `follower L1 only` (reads L1); `follower L1 + sequencer` (reads L1 and L2). `L2` shown as dashed/derived state.
+- **Followers**: `follower L1 only` (reads L1); `follower L1 + sequencer` (reads L1 and L2). `L2` shown as dashed/derived.
 
 ### Bottom — deployment variants
 - Chain types: `Rollup 1`, `Rollup 2`; `sequenced 1 / 2 / 3`.
-- **Non-binding mode**: `composer` containing `simulator` + `sequencer not binding` (stacked ×N) → maps to Rollups.
-- **Binding mode**: three `composer` instances each with `sequencer binding` → map to sequenced chains.
+- **Non-binding mode**: `composer` with `simulator` + `sequencer not binding` (stacked ×N) → Rollups.
+- **Binding mode**: three `composer` instances each with `sequencer binding` → sequenced chains.
 
 ---
 
-## Expert review synthesis (agent-mesh: Web3 Protocol Architect + Technical Advisor)
+## Part 3 — Expert review synthesis (agent-mesh: Web3 Protocol Architect + Technical Advisor)
 
 ### Convergent findings
-- The macro decomposition is **sound**: sequencer-per-chain (L2 block production), composer (cross-chain orchestration + settlement), prover, and L1 Builder are genuinely distinct timescales and failure domains.
-- The **sync-block / async-block** model maps cleanly to the KB's native-path vs async-path. New detail not in the KB: sync blocks are **event-triggered** ("only needed if L1↔L2 tx pending"), not always-on. Operationally realistic, but introduces an unanswered cross-chain-tx → sync-block-inclusion latency question.
-- "Stream helper data so the prover starts early" is **feasible** and matches ZisK pipelining — but only the L1-state-independent portion can start early; the proxy state-root portion still waits on the final L1 block hash.
+- The macro decomposition is **sound**: sequencer-per-chain (L2 block production), composer (cross-chain orchestration + settlement), prover, and L1 Builder are genuinely distinct timescales / failure domains.
+- The **sync-block / async-block** model maps to the KB's native-path vs async-path, with a new detail: sync blocks are **event-triggered** ("only needed if L1↔L2 tx pending"), not always-on.
+- "Stream helper data so the prover starts early" is **feasible** and matches ZisK pipelining — but only the L1-state-independent portion can start early; the proxy state-root portion still waits on the final L1 block hash. The deck's `<3s` overlapped Bundle/Proof building is the same idea made concrete.
 
-### Load-bearing gaps (Choice Points)
-1. **Reorg / cancellation protocol is the #1 missing piece.** Composer submits postBatch → prover starts → if L1 reorgs, nothing shows who tells the prover its streamed data is invalid, or what state each binary resets to. Both experts flagged this as where bugs surface first.
-2. **Multi-composer coordination (binding mode).** Three independent binding composers cannot atomically settle a cross-chain tx spanning their chains without a coordination layer that is not drawn. The hardest part of the binding design is invisible.
-3. **Binding vs non-binding = trust delta, not config.** Non-binding degrades "same-block atomicity" to "same-batch, eventually." If binding is a self-declared label with no slashing at the settlement contract, it is a social guarantee, not a cryptographic one.
-4. **Engine API "sync block flag" semantics** are an actual EEZ-reth protocol change needing a precise spec (does it gate sealing? block next-block production during a chain split?).
-5. **Single points of liveness:** one sequencer-per-chain (key in process, no standby) and a single composer per binding deployment, with no HA / redundancy shown. (Note: the single stacked `prover` box is a topology abstraction — EEZ requires a *minimum of two* proving systems as a protocol requirement, e.g. Zisk + SP1 + TEE. Do not read the diagram as single-prover.)
+### Gaps the diagram left open — now partly answered by the deck
+1. **Reorg / cancellation protocol.** The deck's *Based/Centralized Sequencer Rollups* slide gives the two intended methods — **optimistic = reorgs**, **pessimistic = locking (not necessarily the full chain)** — which is the design intent behind the diagram's "chain split". Still no per-step cancellation protocol for an in-flight prover run once an L1 reorg invalidates a sync block.
+2. **Multi-composer coordination (binding mode).** The deck confirms "anybody can be a composer" and that there is **no protocol-defined public crosschain-tx pool yet** — so coordination across composers is explicitly an open design area, not an oversight.
+3. **Binding vs non-binding = trust delta.** Non-binding degrades same-block atomicity to "same-batch, eventually."
+4. **Engine API "sync block flag"** is a real EEZ-reth protocol change needing a precise spec.
+5. **Single points of liveness:** one sequencer-per-chain (key in process, no standby) and a single composer per binding deployment. (The single stacked `prover` box is a topology abstraction — EEZ enforces a *minimum of two* proving systems in-contract, e.g. Zisk + SP1 + TEE. Do not read the diagram as single-prover.)
 
 ### Blind spot
-- **Sequencer economics:** binding requires capital lockup but sync-block fee revenue is irregular (only when cross-chain txs pend). Rational operators may defect to non-binding in quiet periods, collapsing the synchronous guarantee to best-effort.
+- **Sequencer / composer economics:** the deck openly states fee incentives for composers are undefined. Binding requires commitment but sync-block / cross-chain fee revenue is irregular — rational operators may default to non-binding / optimistic in quiet periods.
 
 ### Robust read
-Treat the diagram as a **correct topology sketch, not an implementation spec.** The happy path is well understood; the deferred decisions (reorg/cancellation, multi-composer coordination, Engine-API flag semantics) are exactly the load-bearing ones an implementer would need resolved.
+The diagram is a **correct topology sketch**; the deck is the spec-level companion. Together they answer most of the "happy path" and name the genuinely open problems (reorg/cancellation protocol, multi-composer coordination, composer fee incentives) as roadmap work rather than hidden gaps.
 
 ---
 
-*Filed 2026-06-18. Companion to `martin-l2-talk.md` (same source author lineage). Review produced via agent-mesh orchestrator with isolated Web3 Protocol Architect and Technical Advisor experts, grounded against this repo's `02-technical/` KB and `open-questions-v2.md`.*
+*Filed 2026-06-18 (deck reviewed in full after initial diagram-only pass). Companion to `martin-l2-talk.md`. Review via agent-mesh orchestrator (isolated Web3 Protocol Architect + Technical Advisor), grounded against this repo's `02-technical/` KB and `open-questions-v2.md`.*
