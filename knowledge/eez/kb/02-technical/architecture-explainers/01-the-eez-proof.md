@@ -40,7 +40,7 @@ The deck's properties list is precise about what EEZ guarantees here. Property 6
 
 This is a deliberately concrete benchmark. When contract A calls contract B on Ethereum L1 today, you do not worry that B might receive the call but A never sees the return, or that someone replays the message. The EVM guarantees the call and its result resolve together under one consensus. EEZ aims to extend that same guarantee across rollup boundaries.
 
-The guarantee rests on proof, not on trusted intermediaries. EEZ is proof-system agnostic (ZK, TEE, or multisig are all permitted) and the contract enforces a minimum of two proving systems per rollup. The DAPPCon node diagram shows a single `prover` box, but that is a topology abstraction. The on-chain configuration requires at least two proving systems (for example Zisk plus SP1 plus a TEE) and reverts if fewer are configured. The security of a cross-rollup call therefore rests on multiple independent proofs agreeing, not on one prover or one relayer.
+The guarantee rests on proof, not on trusted intermediaries. EEZ is proof-system agnostic (ZK, TEE, or multisig are all permitted). Each rollup chooses its own proving systems and its own threshold (an M-of-N choice) through its manager contract, so the count is the rollup's decision rather than a hardcoded minimum. Multiple independent proofs are the security model EEZ is built for (for example Zisk plus SP1 plus a TEE), but the protocol does not force any particular number. The DAPPCon node diagram shows a single `prover` box, but that is a topology abstraction. The security of a cross-rollup call therefore rests on the rollup's configured proofs agreeing, not on one prover or one relayer.
 
 ## How this differs from bridging
 
@@ -63,7 +63,7 @@ The flow runs as a chain of normal CALLs and RETURNs:
 3. `Whitelist` runs its check and issues a RETURN with the answer.
 4. `DAO` records the vote and issues a RETURN to `UserAA`.
 
-Each of these CALL and RETURN context switches is written into the Execution Table on L1 and captured in the EEZ Trace. The whole sequence, the vote, the eligibility check, the recorded result, is proven as one synchronous transaction by at least two proving systems.
+Each of these CALL and RETURN context switches is written into the Execution Table on L1 and captured in the EEZ Trace. The whole sequence, the vote, the eligibility check, the recorded result, is proven as one synchronous transaction by the rollup's configured proving systems.
 
 The outcome is atomic. If the whitelist check fails, the vote does not get recorded, and the revert is captured in the trace. There is no state in which the DAO has half-processed a vote from an account it never confirmed was eligible. With a bridge-and-message design, the eligibility check and the vote would be separate cross-chain hops, and the gap between them would be a source of risk. Here there is no gap, because there is no message in flight. There is one proven step.
 
@@ -82,6 +82,6 @@ These guardrails were relevant to this document and were respected as follows:
 - **Economic zone, not L2.** EEZ is described throughout as an economic zone built on Ethereum and the shared proving and settlement layer, never as an L2 or a single network.
 - **Async vs native finality.** No single finality figure is applied to EEZ as a whole. The native path (~12 seconds) and the async path (~20 minutes) are named with their figures, and finality is kept distinct from the synchronous-composability claim.
 - **Proxies, not bridges.** The cross-chain mechanism is described as proxies, which are synchronous and share state. The bridging section contrasts EEZ with bridges rather than calling any EEZ mechanism a bridge.
-- **Multi-prover, not single-prover.** Proving is always described in the plural (minimum two proving systems per rollup). The single `prover` box in the DAPPCon diagram is flagged as a topology abstraction, not a single-prover claim.
+- **Multi-prover-capable, not single-prover.** EEZ is multi-prover-capable and proof-system agnostic. Each rollup sets its own threshold (which can be one or more proving systems), so there is no protocol-enforced minimum of two. The single `prover` box in the DAPPCon diagram is flagged as a topology abstraction, not a single-prover claim.
 - **Execution entries, not transactions.** Operations inside a native rollup are called execution entries. "Transaction" is reserved for the L1 layer and for the deck's own phrasing of the combined-execution claim.
 - **Not deployed yet.** The document states EEZ is at roadmap stage and explicitly says builders cannot join today, with the roadmap milestones named.

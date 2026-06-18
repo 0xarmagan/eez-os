@@ -52,7 +52,7 @@ No wrapped assets. ETH stays ETH. For native-ETH rollups, a `CALL` can carry ETH
 
 No message relay. The interaction is a plain `CALL` and `RETURN` between smart contracts, written into the Execution Table on L1. There is no separate messaging layer carrying a payload from A to B.
 
-No relay trust. You are not trusting a set of validators or a multisig to attest that a message crossed. The combined execution is proved. EEZ enforces a minimum of two proof systems per rollup in the contract (for example Zisk plus SP1, or a proof system plus a TEE). It is multi-prover by requirement, never a single prover.
+No relay trust. You are not trusting a set of validators or a multisig to attest that a message crossed. The combined execution is proved by the proving systems each rollup configures. EEZ is proof-system agnostic and built for multiple independent proofs (for example Zisk plus SP1, or a proof system plus a TEE), with each rollup choosing its own systems and threshold. The trust rests on proofs, not on a relayer or a committee.
 
 Shared state, not reconciled state. Because the proxy and its real contract share one state through L1, there is nothing to reconcile later. The deck states the security goal plainly: the same security Ethereum gives independent smart contracts that call each other.
 
@@ -74,7 +74,7 @@ L1 is the settlement point and the shared record. The ETH itself stays native on
 
 What you write looks ordinary. Your contract on rollup A calls a contract on rollup B. In your code it is a `CALL` to an address, with a `RETURN` coming back, and ETH attached if you need it. You do not write bridge glue, you do not mint or burn a wrapped token, and you do not wait on a relayer.
 
-What happens underneath. On L1, the target contract is represented by its proxy (the starred contract). The proxy writes the `CALL` into the Execution Table on L1. The combined execution across the involved rollups is proved together by at least two proof systems, with each context switch recorded in the EEZ Trace. The `RETURN` is written back into the Execution Table, and any ETH movement updates the rollup-level accounting on L1.
+What happens underneath. On L1, the target contract is represented by its proxy (the starred contract). The proxy writes the `CALL` into the Execution Table on L1. The combined execution across the involved rollups is proved together by the rollups' configured proving systems, with each context switch recorded in the EEZ Trace. The `RETURN` is written back into the Execution Table, and any ETH movement updates the rollup-level accounting on L1.
 
 The point of the design is that the second paragraph stays out of your way. You get a cross-chain call that reads and behaves like a same-chain call, with shared state and no wrapped assets, because the proxy and the Execution Table do the work on L1.
 
@@ -97,7 +97,7 @@ There is no single finality number for EEZ as a whole. Quote ~12s for native and
 - **Proxies, not bridges.** This is the load-bearing distinction. Proxies are synchronous and share state. Do not call any EEZ-native mechanism a bridge. If a partner runs their own bridge, scope that to them explicitly.
 - **No wrapped assets, no message relay, no relay trust.** These are the three things a bridge needs and a proxy does not. ETH stays native.
 - **Execution entries, not transactions, inside a rollup.** "Transaction" is used here only for the L1 layer. Calls and returns recorded in the Execution Table are entries in the combined execution, not L1 transactions in their own right.
-- **Multi-prover, minimum two.** A minimum of two proof systems per rollup is enforced in the contract. Never use singular framing ("a prover", "the prover"). Diagrams that show one prover box are a topology abstraction, not a single-prover claim.
+- **Proof-system agnostic and multi-prover-capable.** EEZ is proof-system agnostic and built for multiple independent proofs. Each rollup sets its own threshold (one or more) on its manager contract, so there is no protocol-enforced minimum of two. Avoid singular framing for EEZ as a whole ("a prover", "the prover"), but do not claim a contract floor of two. Diagrams that show one prover box are a topology abstraction, not a single-prover claim.
 - **Async ~20 min vs native ~12s.** No single finality number applies to EEZ. Name the path beside the figure.
 - **Economic zone, not an L2.** EEZ is an economic zone built on Ethereum. Native rollups are an L2 construction EEZ builds on, not a description of EEZ itself.
 - **Not deployed yet.** EEZ is pre-deployment. Roadmap milestones include Composer 1.0, Chain Zero, and connecting Gnosis Chain. Do not imply anyone can participate today.

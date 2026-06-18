@@ -8,6 +8,8 @@ This explainer walks through the three types. It then covers the two methods for
 
 One framing note before the detail. EEZ is not deployed yet. The roadmap (deck slide 55) runs through smart-contract cleanup, an audit, the proving system, Composer 1.0, Chain Zero, and then connecting Gnosis Chain. So treat every "can a chain join" question as a roadmap question, not a "today" one. The mechanics below describe the design, not a live network.
 
+> **Scope: vision versus shipped code.** The three chain types in this explainer (custom native rollups, based or centralized sequencer rollups, validiums) describe the DAPPCon deck's broader vision. The shipped implementation is narrower. The core-protocol repo (`eez-core-protocol`, branded "Sync Rollups") currently scopes synchronous composability to based rollups that share the same L1 sequencer. It pre-computes state transitions off-chain and verifies them on-chain, which enables atomic cross-rollup calls within a single L1 block. That code is explicitly early-stage and not audited. Do not assume all three chain types are implemented today. Read each type as a roadmap question, not a live capability.
+
 ## Chain type 1: custom native rollups
 
 A custom native rollup brings its own state transition function. The deck is explicit that this function can run in WASM, in RISC-V, or in a custom format. The rollup defines its own rules and its own accepted proving systems. EEZ does not impose one execution model. Rollups are sovereign, governed by a rollup smart contract.
@@ -79,6 +81,6 @@ There is an honest cost to name. Binding mode asks the sequencer for a commitmen
 - EEZ is an economic zone built on Ethereum, not "an L2". Native rollups are an L2 construction that EEZ builds on top of.
 - Cross-chain interaction uses proxies, not bridges. Proxies are synchronous and share state. Cross-rollup ETH movement uses rollup-level ETH accounting in L1, not a bridge.
 - Inside EEZ native rollups, the operations are execution entries, not transactions. "Transaction" is acceptable for L1 and for partner chains (based, centralized sequencer, validium) that run their own transaction model, scoped to them.
-- EEZ enforces a minimum of two proving systems per rollup in-contract. The single `prover` box in the node-architecture diagram is a topology abstraction, not a single-prover claim. Do not use singular proving framing.
+- EEZ is proof-system agnostic and multi-prover-capable. Each rollup sets its own threshold via its manager contract, an M-of-N choice that can be one or more proving systems. There is no protocol-enforced minimum of two. The single `prover` box in the node-architecture diagram is a topology abstraction, not a single-prover claim. Do not use singular proving framing for EEZ as a whole.
 - The two coordination methods (optimistic = reorgs, pessimistic = locking) and the binding versus non-binding distinction are Jordi's engineering-level framing from the DAPPCon workshop, not approved EEZ comms.
 - Composer fee incentives are undefined in the deck. The non-binding-default risk in quiet periods is an open design area, flagged as roadmap work.

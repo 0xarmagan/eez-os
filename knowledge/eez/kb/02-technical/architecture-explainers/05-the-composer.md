@@ -16,7 +16,7 @@ In more detail, the composer takes the last n blocks across the rollups it serve
 
 The order matters. The composer does not send anything to L1 raw. It assembles a bundle, the provers do their work on it, and only then does the bundle reach L1. The composer streams helper data to the provers so they can start early, which keeps the whole pipeline inside an L1 slot. The deck targets overlapped bundle building and proof building at under three seconds in total.
 
-A few accuracy points sit underneath this. The composer submits to provers, plural. EEZ enforces a minimum of two proving systems per rollup in the contract, for example Zisk plus SP1 plus a TEE. The architecture diagram draws a single `prover` box, but that is a topology abstraction. Do not read it as a single prover. The work the composer settles is cross-chain interaction expressed as normal Ethereum CALL and RETURN between contracts on different rollups, recorded in the EEZ Trace blob format. Inside a native rollup these operations are execution entries, not transactions. The L1 layer and partner chains keep their own transaction model.
+A few accuracy points sit underneath this. The composer submits to provers, plural. It submits proofs from the proving systems each rollup has configured. EEZ is proof-system agnostic, so every rollup chooses its own systems and its own threshold. The count is the rollup's configuration, not a fixed minimum set by the protocol. The architecture diagram draws a single `prover` box, but that is a topology abstraction. Do not read it as a single prover. The work the composer settles is cross-chain interaction expressed as normal Ethereum CALL and RETURN between contracts on different rollups, recorded in the EEZ Trace blob format. Inside a native rollup these operations are execution entries, not transactions. The L1 layer and partner chains keep their own transaction model.
 
 ---
 
@@ -65,7 +65,7 @@ Put plainly, the protocol defines what a composer does and lets anyone do it, bu
 ## Accuracy notes
 
 - **EEZ is not deployed.** The composer here is "Composer 1.0", roadmap item 6 of 8 (DAPPCon deck slide 55). No one can run a composer today.
-- **Provers are plural.** The composer submits to multiple proving systems. EEZ enforces a minimum of two per rollup in the contract. The single `prover` box on the diagram is a topology abstraction, not a single-prover claim.
+- **Provers are plural.** EEZ is proof-system agnostic and multi-prover-capable. Each rollup sets its own threshold (one or more) through its manager. There is no protocol-enforced minimum of two. The single `prover` box on the diagram is a topology abstraction, not a single-prover claim.
 - **Proxies, not bridges.** EEZ cross-chain interaction uses proxies on L1, which are synchronous and share state. It is not a bridge and not message passing. It is a normal Ethereum CALL and RETURN.
 - **Execution entries, not transactions.** Operations inside an EEZ native rollup are execution entries. "Transaction" is used only for the L1 layer (for example the `postAndVerifyBatch` transaction and L1 user tx) and for partner chains' own models.
 - **Async ~20min vs native ~12s.** No single finality figure applies to EEZ as a whole. The async path settles in about 20 minutes. Native rollups settle in about 12 seconds. This document does not attach a finality number to the composer itself, because settlement timing depends on the path.

@@ -2,13 +2,15 @@
 
 *Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026, Jordi Baylina, co-branded Ethereum Economic Zone × ZisK VM). Engineering-level founding material. Quote as Jordi's framing, not as approved EEZ comms. EEZ is at roadmap stage and is not deployed yet. The ZisK proving system is itself a roadmap item, listed under "Signature and Zisk proving system" on the DAPPCon roadmap slide.*
 
-This explainer is for builders and partners who want to understand how the Ethereum Economic Zone (EEZ) generates proofs fast enough to make synchronous cross-rollup execution work. It covers the Action-Driven State Transition Function (ADSTF), the EEZ Trace blob format, the recursion pipeline step by step, the in-contract rule that forces at least two proving systems per rollup, and why low proof-generation latency is the thing that makes a single synchronous cross-rollup step possible at all.
+This explainer is for builders and partners who want to understand how the Ethereum Economic Zone (EEZ) generates proofs fast enough to make synchronous cross-rollup execution work. It covers the Action-Driven State Transition Function (ADSTF), the EEZ Trace blob format, the recursion pipeline step by step, how each rollup configures its own proving systems and verification threshold, and why low proof-generation latency is the thing that makes a single synchronous cross-rollup step possible at all.
 
-One framing note before we start. The DAPPCon talk is branded around ZisK, so it is easy to read EEZ as a single-prover system. It is not. ZisK is one proving system among several. EEZ requires a minimum of two proving systems per rollup, and the requirement is enforced in the contract. Hold that point through the whole document. We return to it in the multi-prover section.
+One framing note before we start. The DAPPCon talk is branded around ZisK, so it is easy to read EEZ as a single-prover system. It is not. ZisK is one proving system among several EEZ supports. EEZ is proof-system agnostic, and each rollup chooses its own systems and threshold. Hold that point through the whole document. We return to it in the multi-prover section.
 
 EEZ is an economic zone built on Ethereum. It is not an L2, and it is not equivalent to any single rollup. It is the shared proving and settlement layer that lets independent rollups call into each other inside one atomic step.
 
 ## The Action-Driven State Transition Function (ADSTF)
+
+A note on the term before we begin. ADSTF is the deck's conceptual framing for the per-rollup state transition. The shipped contracts express this with execution entries, state deltas, and a rolling hash, not a type literally named ADSTF, so a reader checking the code will not find that label there. We keep ADSTF as the conceptual name throughout.
 
 A normal state transition function takes a starting state and a block of transactions, and produces an ending state. EEZ needs more than that, because a rollup in EEZ does not run in isolation. It can be called by another rollup, and it can call out to another rollup, all inside the same proven step.
 
@@ -42,7 +44,7 @@ EEZ proves the combined execution through a chain of recursive circuits. Each ci
 
 1. **ADSTF Adaptor.** This is the entry point. Each rollup defines its own state transition function and supplies a circuit for it. The ADSTF Adaptor verifies a user-defined circuit verification key (VK). In plain terms, it checks that the rollup ran the state transition function the rollup itself committed to, and nothing else. Because rollups are sovereign and define their own rules and their own accepted proving systems, this adaptor step is where each rollup's own choices get checked against its own declared VK.
 
-2. **L1 Hash Builder.** This circuit ties the proof to L1. It handles the blob commitment, so the data the proof covers is the data actually posted. It records the starting and ending blob rollup state, so the step has a defined before and after on L1. It captures the L1 interactions for the step. And it carries the mapping from each RollupId to the proof system and VK that rollup uses. This mapping is the bridge between the abstract proof and the concrete in-contract rule about which proving systems are allowed, which we cover in the next section.
+2. **L1 Hash Builder.** This circuit ties the proof to L1. It handles the blob commitment, so the data the proof covers is the data actually posted. It records the starting and ending blob rollup state, so the step has a defined before and after on L1. It captures the L1 interactions for the step. And it carries the mapping from each RollupId to the proof system and VK that rollup uses. This mapping is the bridge between the abstract proof and each rollup's own in-contract configuration of which proving systems it allows, which we cover in the next section.
 
 3. **Aggregation Circuit.** This circuit verifies two circuits at once and adds their accumulators together. An accumulator is a running value that lets later circuits defer some verification work cheaply rather than redoing it. By combining two proofs and summing their accumulators, the aggregation circuit folds many sub-proofs into one as the tree builds up. It runs repeatedly, pairing proofs together until a single root aggregation remains.
 
@@ -52,17 +54,19 @@ EEZ proves the combined execution through a chain of recursive circuits. Each ci
 
 Read the pipeline as a funnel. Many per-rollup proofs go in at the ADSTF Adaptor. The L1 Hash Builder anchors them to L1. The Aggregation Circuit folds them together. The Final Circuit checks the fold closed cleanly with the zero-accumulator test. The PLONK Circuit produces the single proof that settles on L1.
 
-## Multi-prover enforcement
+## Multi-prover capability
 
-Now the point we flagged at the top. EEZ does not trust one proving system. It requires at least two per rollup, and the contract enforces it.
+Now the point we flagged at the top. EEZ is proof-system agnostic and multi-prover-capable. Each rollup chooses its own proving systems and its own verification threshold, and a security-conscious rollup picks two or more. The protocol does not force a minimum.
 
-The mechanism is concrete. The contract uses structures named `ProofSystemBatchPerVerificationEntries` and `RollupIdWithProofSystems`, and a function `_fetchVkMatrix(...)` that builds a per-rollup VK matrix. A second function, `checkProofSystemsAndGetVkeys(...)`, validates that matrix. If a rollup's configuration does not meet the requirement, the contract reverts with `InvalidProofSystemConfig()`.
+The mechanism is concrete. Each rollup deploys its own manager contract, which holds an owner-set `threshold`. The owner sets it with `setThreshold`, which accepts any value, including one, so the threshold is the rollup's choice rather than a fixed protocol rule. The manager's `checkProofSystemsAndGetVkeys(...)` returns the per-system verification keys for a batch. If the batch supplies fewer proofs than the rollup's threshold, the function reverts with `ThresholdNotMet(submitted, required)`. If a batch names a proving system the rollup has not allowed, it reverts with `ProofSystemNotAllowed`.
 
-So the minimum of two proving systems is not a recommended default and not a convention. It is a hard requirement. A rollup that tries to settle with a single proving system gets its batch reverted. The VK matrix is how the contract keeps track of which proving systems each rollup must satisfy, and the revert is the enforcement.
+The contract also uses structures named `ProofSystemBatchPerVerificationEntries` and `RollupIdWithProofSystems`, and a helper `_fetchVkMatrix(...)` that builds a per-rollup VK matrix. The VK matrix is how the contract tracks which proving systems each rollup has configured.
 
-This is why ZisK branding on the talk does not make EEZ a ZisK system. ZisK is one valid proving system. The EEZ properties list names ZK, TEE, and multisig as acceptable proof system types, and a rollup is free to choose. But it must choose more than one. A workable configuration is something like ZisK plus SP1 plus a TEE. The reason is robustness. If one proving system has a bug, the others still have to agree before a batch settles, so a single compromised prover cannot push an invalid state through.
+Note one separate error so you do not confuse it with the threshold check. `InvalidProofSystemConfig()` is a registry-side structural error, raised when a proof-system configuration is malformed, for example an empty proof-system list, a proof-count mismatch, or wrong ordering. It is not the threshold check and is not thrown by `checkProofSystemsAndGetVkeys`.
 
-When you describe EEZ proving to anyone, describe it as multi-prover. Never write "the EEZ prover" or "the EEZ ZK proof system" in the singular. The architecture is plural by requirement.
+This is why ZisK branding on the talk does not make EEZ a ZisK system. ZisK is one valid proving system. The EEZ properties list names ZK, TEE, and multisig as acceptable proof system types, and a rollup is free to choose. A workable configuration is something like ZisK plus SP1 plus a TEE. The reason is robustness. If one proving system has a bug, the others still have to agree before a batch settles, so a single compromised prover cannot push an invalid state through. Multi-prover is the security design intent, and likely an EEZ-zone policy recommendation, but the contract does not force it.
+
+When you describe EEZ proving, describe it as multi-prover-capable and proof-system agnostic. Avoid writing "the EEZ prover" or "the EEZ ZK proof system" in the singular, because the architecture is built to run several systems at once.
 
 ## Latency and synchronous composability
 
@@ -80,7 +84,7 @@ So the pipeline and the latency target are two halves of one idea. The recursion
 
 ## Accuracy notes
 
-- **Multi-prover is a protocol requirement, enforced in-contract.** Minimum two proving systems per rollup, checked by `checkProofSystemsAndGetVkeys(...)` against the VK matrix from `_fetchVkMatrix(...)`, reverting with `InvalidProofSystemConfig()`. ZisK is one proving system, not the whole system. Never use singular proving framing for EEZ.
+- **EEZ is proof-system agnostic and multi-prover-capable.** Each rollup sets its own threshold (one or more) via its manager, and `checkProofSystemsAndGetVkeys(...)` reverts with `ThresholdNotMet` when a batch supplies fewer proofs than that threshold. There is no protocol-enforced minimum of two. `InvalidProofSystemConfig()` is a separate registry-side structural error, not the threshold check. ZisK is one proving system, not the whole system. Avoid singular proving framing for EEZ.
 - **The under-three-seconds figure is a proof-generation target inside one L1 slot.** It is not finality. Native rollups finalise in around twelve seconds. The async path takes around twenty minutes. Name which figure you mean whenever you cite a number.
 - **Proxies, not bridges.** EEZ's cross-chain mechanism uses proxies, which are synchronous and share state. Do not call anything EEZ-native a bridge.
 - **Execution entries, not transactions, inside native rollups.** "Transaction" applies to the L1 layer or to a partner chain's own model, not to operations inside an EEZ native rollup.
