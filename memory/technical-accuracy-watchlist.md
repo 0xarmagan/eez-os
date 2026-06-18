@@ -29,6 +29,7 @@ Correct: EEZ's cross-chain mechanism uses proxies. Proxies are synchronous and s
 **MULTI-PROVER, NOT SINGLE-PROVER**
 Blurred as: "EEZ uses a ZK prover" or "the EEZ ZK proof system."
 Correct: EEZ supports multiple proof systems in parallel. Do not use singular or definite framing ("a prover", "the prover"). Say "multiple proof systems" or avoid singular framing entirely.
+`[NEW 2026-06-18]` Architecture diagrams (incl. Jordi's DAPPCon "Martin's Draw") show a single `prover` box — that is a topology abstraction, not a single-prover claim. Minimum two proving systems (e.g. Zisk + SP1 + TEE) is a protocol requirement. Do not let a single-box diagram justify singular framing in copy.
 
 **ECONOMIC ZONE, NOT L2**
 Blurred as: "EEZ is an L2" or "EEZ is a Layer 2 network."
