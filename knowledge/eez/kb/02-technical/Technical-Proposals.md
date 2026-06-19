@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs the formal protocol-level specification for native rollup composability — native vs. non-native rollup definitions, block-building process, Global Exit Root, and custom STF rules."
+  skills: [technical-accuracy, builder-enablement, gip-authoring]
+  does_not_cover: "High-level system overview or Zisk's proving internals — use Technical-Architecture.md or ZK-Real-Time-Proving.md for those."
+---
+
 # **Proposal: Composability Between Rollups on Ethereum**
 
 ## **1\. Motivation**

@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs a concise, decision-maker-oriented summary of EEZ — problem, solution, team, timeline, and investment thesis in one page."
+  skills: [alliance-outreach, ecosystem-intel, content-ingestion]
+  does_not_cover: "Technical implementation depth or full partner details — use Comprehensive-Report.md, Technical-Architecture.md, or Alliance-Members.md for those."
+---
+
 # Executive Summary
 
 High-level overview of EEZ for decision-makers.

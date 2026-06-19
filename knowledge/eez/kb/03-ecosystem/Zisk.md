@@ -5,6 +5,10 @@ subtype: project
 tags: [zkVM, ZK-proving, Ethereum, EEZ, Circom, Baylina]
 source_count: 5
 updated: 2026-04-09
+ai_context:
+  use_when: "User needs background on Zisk as an organisation — Jordi Baylina's credentials, Zisk's role as EEZ's technical backbone, or credibility signals and open questions around production readiness."
+  skills: [technical-accuracy, ecosystem-intel, content-ingestion]
+  does_not_cover: "Zisk's proving pipeline architecture and latency numbers — use ZK-Real-Time-Proving.md for those technical specifics."
 ---
 
 ## Summary

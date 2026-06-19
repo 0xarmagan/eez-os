@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User or an external party asks a common question about EEZ — what it is, how it differs from bridges, governance, re-orgs, or launch timeline."
+  skills: [alliance-outreach, builder-enablement, content-ingestion]
+  does_not_cover: "Deep technical explanations or partner-specific details — use Technical-Architecture.md or Alliance-Members.md for those."
+---
+
 # Frequently Asked Questions
 
 ## What is EEZ?

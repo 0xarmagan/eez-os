@@ -4,6 +4,10 @@ type: concept
 tags: [composability, atomic-execution, cross-chain, EEZ, L2, DeFi]
 source_count: 4
 updated: 2026-04-09
+ai_context:
+  use_when: "User needs to explain or evaluate EEZ's core technical differentiator — how same-block atomic cross-chain calls work and why they are hard."
+  skills: [builder-enablement, technical-accuracy, content-ingestion]
+  does_not_cover: "Zisk's internal proving pipeline and latency measurements — use ZK-Real-Time-Proving.md for those."
 ---
 
 ## Definition

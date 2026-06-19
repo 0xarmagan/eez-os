@@ -4,6 +4,10 @@ type: concept
 tags: [ZK, zkVM, Zisk, proving-speed, EEZ, Circom, Baylina]
 source_count: 3
 updated: 2026-04-09
+ai_context:
+  use_when: "User needs precise detail on Zisk's proving speed claims, gap time, pipelining architecture, or how real-time proving makes synchronous composability possible."
+  skills: [technical-accuracy, builder-enablement, content-ingestion]
+  does_not_cover: "Smart contract settlement mechanics or the broader EEZ system architecture — use EEZ-Smart-Contract-Technical-Deep-DIVE.md or Technical-Architecture.md for those."
 ---
 
 ## Definition

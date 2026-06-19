@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs a full orientation to EEZ — what it is, why it matters, how it works, and who is involved."
+  skills: [alliance-outreach, builder-enablement, content-ingestion, ecosystem-intel]
+  does_not_cover: "Deep smart contract implementation details — use Technical-Architecture.md or EEZ-Smart-Contract-Technical-Deep-DIVE.md for those."
+---
+
 # EEZ Overview
 
 What is the Ethereum Economic Zone and why it matters.

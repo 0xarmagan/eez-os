@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs a fast reference for key EEZ numbers, dates, people, or one-line answers — ideal for fact-checking drafts or briefing someone quickly."
+  skills: [alliance-outreach, content-ingestion, ecosystem-intel]
+  does_not_cover: "Detailed technical mechanics or partner background — use Overview.md or Alliance-Members.md for those."
+---
+
 # EEZ Quick Facts
 
 The essentials about the Ethereum Economic Zone in 2 minutes.

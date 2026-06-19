@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs to identify who leads EEZ, what their roles are, or which organisation is responsible for a given function — also the contact for press and partnership enquiries."
+  skills: [alliance-outreach, ecosystem-intel, gip-authoring]
+  does_not_cover: "Alliance partner integration status or co-marketing details — use Alliance-Members.md for those."
+---
+
 # Key People & Organizations
 
 The people and teams building the Ethereum Economic Zone.

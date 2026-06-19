@@ -1,6 +1,6 @@
 # EEZ Brand — How to Explain It
 
-**For:** Internal team, partner briefings, designer onboarding
+**For:** Internal team, partner briefings, designer onboardyes ing
 **Owner:** Armagan Ercan
 **Last updated:** 2026-05-30
 

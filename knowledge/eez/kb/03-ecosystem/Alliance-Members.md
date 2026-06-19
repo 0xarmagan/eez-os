@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs to know which organisations are EEZ founding partners, what each contributes, and what partnership commitment entails."
+  skills: [alliance-outreach, ecosystem-intel, content-ingestion]
+  does_not_cover: "Individual partner integration status, co-marketing assets, or outreach templates — check partners.yaml for structured data and alliance-outreach skill for drafting."
+---
+
 # EEZ Founding Alliance (10 Members)
 
 ## The Partners

@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs to understand EEZ's full system architecture — proxy contracts, ZK proving, atomic execution, governance, and how they fit together."
+  skills: [builder-enablement, technical-accuracy, ecosystem-intel]
+  does_not_cover: "Smart contract Solidity implementation specifics — use EEZ-Smart-Contract-Technical-Deep-DIVE.md; for Zisk prover internals use ZK-Real-Time-Proving.md."
+---
+
 # Ethereum Economic Zone (EEZ)
 
 **Status:** Active joint venture between Gnosis and Zisk, backed by Ethereum Foundation  

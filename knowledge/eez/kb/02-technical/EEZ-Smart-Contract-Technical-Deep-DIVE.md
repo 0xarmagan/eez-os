@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs Solidity-level detail on the EEZ Settlement Contract — execution entries, atomic batch settlement, pluggable proof systems, proxy mechanism, or gas optimisation."
+  skills: [technical-accuracy, builder-enablement]
+  does_not_cover: "Zisk prover internals or the protocol-level native rollup spec — use ZK-Real-Time-Proving.md or Technical-Proposals.md for those."
+---
+
 # EEZ Smart Contract Architecture — Technical Deep-Dive
 
 **Based on:** EEZ Community Call #1 (May 13, 2026) — Jesus & Jordi Segments  

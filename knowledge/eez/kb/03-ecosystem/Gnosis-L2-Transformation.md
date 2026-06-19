@@ -5,6 +5,10 @@ subtype: org
 tags: [Ethereum, L2, Gnosis-Chain, EEZ, DeFi, infrastructure]
 source_count: 8
 updated: 2026-04-09
+ai_context:
+  use_when: "User needs context on Gnosis's organisational history, its strategic motivation for EEZ, or how its product stack (Safe, CoW Protocol, Gnosis Pay, Gnosis Chain) connects to the EEZ initiative."
+  skills: [ecosystem-intel, content-ingestion, gip-authoring]
+  does_not_cover: "The technical EEZ architecture itself or Zisk's proving technology — use Technical-Architecture.md or ZK-Real-Time-Proving.md for those."
 ---
 
 ## Summary

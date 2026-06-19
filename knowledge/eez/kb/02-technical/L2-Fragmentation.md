@@ -4,6 +4,10 @@ type: concept
 tags: [L2, DeFi, liquidity, UX, bridging, TVL, Ethereum]
 source_count: 5
 updated: 2026-04-09
+ai_context:
+  use_when: "User needs to articulate the problem EEZ solves — fragmented L2 liquidity, bridging costs, UX failures, and why existing solutions fall short."
+  skills: [content-ingestion, ecosystem-intel, technical-accuracy]
+  does_not_cover: "EEZ's specific solution mechanics — use Synchronous-Composability.md or Technical-Architecture.md for those."
 ---
 
 ## Definition

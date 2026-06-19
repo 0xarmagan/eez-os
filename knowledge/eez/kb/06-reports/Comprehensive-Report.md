@@ -1,3 +1,10 @@
+---
+ai_context:
+  use_when: "User needs a complete, single-source reference covering EEZ's problem, solution, vision, competitive positioning, team, and governance in full depth."
+  skills: [alliance-outreach, builder-enablement, ecosystem-intel, content-ingestion, technical-accuracy]
+  does_not_cover: "Real-time Zisk proving internals or Solidity contract code — use ZK-Real-Time-Proving.md or EEZ-Smart-Contract-Technical-Deep-DIVE.md for those."
+---
+
 # EEZ Comprehensive Report
 
 Complete reference for the Ethereum Economic Zone.

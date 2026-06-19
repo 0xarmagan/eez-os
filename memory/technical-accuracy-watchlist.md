@@ -28,8 +28,13 @@ Correct: EEZ's cross-chain mechanism uses proxies. Proxies are synchronous and s
 
 **MULTI-PROVER, NOT SINGLE-PROVER**
 Blurred as: "EEZ uses a ZK prover" or "the EEZ ZK proof system."
-Correct: EEZ supports multiple proof systems in parallel. Do not use singular or definite framing ("a prover", "the prover"). Say "multiple proof systems" or avoid singular framing entirely.
-`[NEW 2026-06-18]` Architecture diagrams (incl. Jordi's DAPPCon "Martin's Draw") show a single `prover` box — that is a topology abstraction, not a single-prover claim. Minimum two proving systems (e.g. Zisk + SP1 + TEE) is a protocol requirement. Do not let a single-box diagram justify singular framing in copy.
+Correct: EEZ is proof-system agnostic and multi-prover capable. Do not use singular or definite framing ("a prover", "the prover"). Say "multiple proof systems" or "each rollup's configured proving systems".
+`[CORRECTED 2026-06-18, verified vs eez-core-protocol]` Architecture diagrams (incl. Jordi's DAPPCon "Martin's Draw") show a single `prover` box — that is a topology abstraction, not a single-prover claim. BUT do NOT claim "minimum two provers is a protocol requirement" — that is FALSE. Each rollup sets its own threshold (M-of-N) on its manager contract; `setThreshold` accepts any value incl. 1. "Two or more" (Zisk + SP1 + TEE) is the security intent / expected default, not a contract floor. Correct copy: "multi-prover capable, each rollup sets its own threshold." Avoid both "the prover" (singular) AND "requires at least two" (overclaim).
+`[ADDED 2026-06-19, eez-core-protocol/docs]` Provers are NOT ZK-only: the interface is `IProofSystem` (renamed from `IZKVerifier`) — *"any verifier — ZK, ECDSA, etc."* A BLS validator multisig is a valid proof system. Do not call EEZ provers "ZK verifiers" categorically.
+
+**SYNCHRONOUS COMPOSABILITY IS BOUNDED, NOT UNLIMITED**
+Blurred as: "any rollup can synchronously call any other rollup atomically in one transaction."
+Correct: Atomic synchronous cross-rollup interaction works only between rollups verified TOGETHER in the same batch (`eez-core-protocol/docs/CAVEATS.md`). Interaction with anything outside the co-verified batch misses (`ExecutionNotFound`) until the batch finishes or the rollups are re-verified jointly. Say "synchronous composability across co-verified rollups," not unbounded any-to-any.
 
 **ECONOMIC ZONE, NOT L2**
 Blurred as: "EEZ is an L2" or "EEZ is a Layer 2 network."
@@ -39,6 +44,6 @@ Correct: EEZ is an economic zone built on Ethereum. "L2" as a descriptor of EEZ 
 
 ## When to run this check
 
-Run on any draft that mentions: finality, speed, throughput, cross-chain movement, proving, security model, or the words "L2", "layer", "bridge", "transaction", "ZK prover."
+Run on any draft that mentions: finality, speed, throughput, cross-chain movement, proving, security model, synchronous/atomic composability, or the words "L2", "layer", "bridge", "transaction", "ZK prover."
 
 Also run on all drafts from `alliance-outreach`, `content-ingestion`, or `gip-authoring` before external send.
