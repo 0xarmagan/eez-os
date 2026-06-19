@@ -1,5 +1,7 @@
 # Gnosis Chain: The First EEZ Chain
 
+![Four integration points and the multisig-to-zk trust path](../diagrams/08-gnosis-chain-first-eez-chain.png)
+
 *Source: `knowledge/eez/sources/dappcon-2026-gnosis-chain-eez-talk.md` (Phillipe Schommers, Gnosis Head of Infrastructure, Dappcon Berlin 2026), with context from Martin Köppelmann's and Jordi Baylina's same-day talks. Engineering-level founding material, not approved EEZ comms. This is reference-grade and a draft until Armagan signs off. The Gnosis-as-EEZ-chain plan is pre-GIP: it is now public via the Dappcon talk, but check the current GIP status before building any external comms around it. Mainnet is not live; the work below is a testnet prototype and a roadmap.*
 
 This explainer is a case study. The other explainers describe EEZ in general. This one describes what it takes for one real chain, Gnosis Chain, to become an EEZ chain, and what the team has already built. It is the concrete form of the "Connecting Gnosis Chain" roadmap item.

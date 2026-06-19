@@ -9,6 +9,8 @@ sources: eez-association/eez-core-protocol (formerly sync-rollups-protocol), COR
 
 # How EEZ Handles Cross-Chain Reentrancy, and Why the Approach Matters
 
+![From a recursive tree to a flat, pre-committed sequential list](diagrams/EEZ-Sequential-Model-Diagram.png)
+
 *By Armagan Ercan*
 
 ---

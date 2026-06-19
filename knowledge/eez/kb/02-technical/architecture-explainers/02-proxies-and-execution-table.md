@@ -1,5 +1,7 @@
 # Proxies and the Execution Table
 
+![L1 proxies write to the Execution Table; one shared state across the divider](../diagrams/02-proxies-and-execution-table.png)
+
 *EEZ architecture explainers, 2 of 7. For builders and Alliance partners.*
 
 Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon 2026 EEZ workshop, Jordi Baylina, 17 June 2026). Quote the mechanism, not the brand. EEZ is not deployed yet. Nothing here is something you can run today.

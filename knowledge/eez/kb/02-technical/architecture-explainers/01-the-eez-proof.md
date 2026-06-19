@@ -1,5 +1,7 @@
 # The EEZ Proof: Synchronous Cross-Rollup Execution
 
+![Synchronous CALL/RETURN in one proven block vs an asynchronous bridge gap](../diagrams/01-the-eez-proof.png)
+
 *Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026, Jordi Baylina). Engineering-level founding material. Quote as Jordi's framing, not as approved EEZ comms. EEZ is at roadmap stage and is not deployed yet.*
 
 This explainer is for builders and partners who want to understand the core technical claim behind the Ethereum Economic Zone (EEZ): that it proves the combined execution of many rollups as a single, synchronous transaction. It explains what that sentence means, how the proof model works, why it counts as synchronous composability, what security it claims, and how it differs from bridging.

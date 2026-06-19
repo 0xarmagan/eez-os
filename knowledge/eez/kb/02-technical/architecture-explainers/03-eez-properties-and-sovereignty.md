@@ -1,5 +1,7 @@
 # EEZ Properties and Rollup Sovereignty
 
+![What EEZ fixes versus what stays the rollup's sovereign choice](../diagrams/03-eez-properties-and-sovereignty.png)
+
 *Explainer 3 of 7. Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon 2026 EEZ Workshop, Jordi Baylina, 17 June 2026), Part 1, "EEZ Properties (canonical 7-point spec)". Quote the figures here as Jordi's engineering-level framing, not as approved EEZ comms.*
 
 ## Why these properties matter

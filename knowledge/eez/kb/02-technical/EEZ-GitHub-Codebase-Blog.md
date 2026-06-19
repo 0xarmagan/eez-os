@@ -10,6 +10,8 @@ sources: "eez-association GitHub org (re-verified 2026-06-19): eez-core-protocol
 
 ## EEZ's Technical Stack: What's Built and How It Works
 
+![The three EEZ repositories and what each one does](diagrams/EEZ-Stack-Diagram.png)
+
 ### 1. What EEZ is building and where it stands
 
 EEZ is being built to solve Ethereum's fragmentation problem: rollups that cannot compose with each other, liquidity that cannot move atomically across chains, and applications that must choose one L2 ecosystem and accept the tradeoffs. The solution is a shared settlement layer that lets rollups execute cross-chain operations atomically, within a single Ethereum block, without requiring bridges or external trust assumptions.

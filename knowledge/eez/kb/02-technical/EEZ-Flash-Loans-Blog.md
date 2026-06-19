@@ -9,6 +9,8 @@ sources: eez-association/eez-core-protocol (formerly sync-rollups-protocol), REA
 
 # Cross-Chain Flash Loans: How EEZ Makes Them Possible
 
+![Borrow on A, use on B, repay on A, atomic in one L1 block](diagrams/EEZ-Flash-Loan-Diagram.png)
+
 Flash loans are one of DeFi's most interesting primitives. They work because the EVM guarantees atomicity: borrow and repay in a single transaction, or the whole thing reverts. Nothing moves unless the repayment is there. That guarantee is what makes the mechanic useful.
 
 But today, flash loans stop at the chain boundary. The moment you want to borrow on one rollup and act on another, you lose atomicity. Cross-chain messages are asynchronous. There is no existing mechanism that gives you the same borrow-use-repay guarantee across two separate chains.

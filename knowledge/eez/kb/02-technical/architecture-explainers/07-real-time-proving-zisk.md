@@ -1,5 +1,7 @@
 # Real-Time Proving with ZisK
 
+![Three base proofs aggregate (accumulator = 0) into a PLONK proof, pipelined under 3s](../diagrams/07-real-time-proving-zisk.png)
+
 *Sources: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop deck) and `knowledge/eez/sources/dappcon-2026-realtime-proving-talk.md` (Jordi Baylina's spoken talk, "Real-Time Proving and Synchronous Composability Between Rollups", DAPPCon Berlin, 16 June 2026). Co-branded Ethereum Economic Zone × ZisK VM. Engineering-level founding material. Quote as Jordi's framing, not as approved EEZ comms. EEZ is at roadmap stage and is not deployed yet. The ZisK proving system is itself a roadmap item, listed under "Signature and Zisk proving system" on the DAPPCon roadmap slide.*
 
 This explainer is for builders and partners who want to understand how the Ethereum Economic Zone (EEZ) generates proofs fast enough to make synchronous cross-rollup execution work. It covers the Action-Driven State Transition Function (ADSTF), the EEZ Trace blob format, the recursion pipeline step by step, how each rollup configures its own proving systems and verification threshold, and why low proof-generation latency is the thing that makes a single synchronous cross-rollup step possible at all.

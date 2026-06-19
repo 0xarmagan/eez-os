@@ -1,5 +1,7 @@
 # EEZ Node Architecture: The Two Binaries and the Block Model
 
+![Two binaries, the six-blocks-per-slot model, and follower roles](../diagrams/06-node-architecture.png)
+
 *Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026, Jordi Baylina). Part 2 transcribes the hand-drawn node-software diagram ("Martin's Draw"); Part 3 carries the expert review. Engineering-level founding material. Quote as Jordi's framing, not as approved EEZ comms. EEZ is at roadmap stage and is not deployed yet.*
 
 This explainer is for builders and partners who want to understand the node software behind the Ethereum Economic Zone (EEZ). It walks through the two binaries that run a participating chain, the block and fork model that governs when cross-chain work happens, the follower and node roles, and the two deployment modes. It also names, honestly, the parts the diagram leaves open.

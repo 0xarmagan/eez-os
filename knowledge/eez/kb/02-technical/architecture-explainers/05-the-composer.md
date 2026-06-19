@@ -1,5 +1,7 @@
 # The Composer
 
+![The composer seeds state on L1, then bundles postAndVerifyBatch](../diagrams/05-the-composer.png)
+
 *Explainer 5 of 8. Sources: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon 2026 EEZ Workshop, Jordi Baylina, 17 June 2026) and `knowledge/eez/sources/dappcon-2026-gnosis-chain-eez-talk.md` (Phillipe Schommers, the on-L1 seeding mechanism and private mempool). Treat as engineering-level founding material, not approved EEZ comms.*
 
 The Ethereum Economic Zone (EEZ) is an economic zone built on Ethereum. It proves the combined execution of many rollups as a single, synchronous run. The composer is the piece of node software that pulls that off. This explainer covers what the composer does, why anyone can run one, the parts inside it, and the design questions the deck leaves open.

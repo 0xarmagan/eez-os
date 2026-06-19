@@ -9,6 +9,8 @@ sources: eez-association/sync-rollups-composer, docs/DERIVATION.md, Cargo.toml (
 
 # EEZ Rollups Are Trustless by Design, Here's the Mechanism
 
+![Trustless L2 chain derivation from L1 alone](diagrams/EEZ-Derivation-Flow-Diagram.png)
+
 **by Armagan Ercan**
 
 ---

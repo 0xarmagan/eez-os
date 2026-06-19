@@ -1,5 +1,7 @@
 # Chain Types and Cross-Chain Coordination
 
+![Three chain types; optimistic versus pessimistic coordination](../diagrams/04-chain-types-and-coordination.png)
+
 *Explainer 4 of 7. Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026, Jordi Baylina). Engineering-level founding material. Quote as Jordi's framing, not as approved EEZ comms.*
 
 The Ethereum Economic Zone is not one chain. It is an economic zone built on Ethereum, and it lets many rollups behave as one synchronous system. Different rollups are built in different ways. EEZ has to account for that. The DAPPCon deck names three chain types, and for each it sets out how that chain joins the zone and what it owes the rest of the system.
