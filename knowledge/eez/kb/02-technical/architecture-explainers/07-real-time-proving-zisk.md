@@ -70,6 +70,8 @@ Note one separate error so you do not confuse it with the threshold check. `Inva
 
 This is why ZisK branding on the talk does not make EEZ a ZisK system. ZisK is one valid proving system. The EEZ properties list names ZK, TEE, and multisig as acceptable proof system types, and a rollup is free to choose. A workable configuration is something like ZisK plus SP1 plus a TEE. The reason is robustness. If one proving system has a bug, the others still have to agree before a batch settles, so a single compromised prover cannot push an invalid state through. Multi-prover is the security design intent, and likely an EEZ-zone policy recommendation, but the contract does not force it.
 
+Gnosis Chain is the concrete proof of this flexibility. Its first proof system is not zk at all. It is a validator multisig: bridge validators re-execute every block on diverse clients and sign, and the M-of-N attestation is the proof the EEZ contracts verify. The plan is to add zk verifiers to the same threshold over time and retire the signers, with the contracts unchanged throughout. So "proof system" genuinely means whatever the chain configures, from a multisig today to zk later. Explainer 8 covers this path in full.
+
 When you describe EEZ proving, describe it as multi-prover-capable and proof-system agnostic. Avoid writing "the EEZ prover" or "the EEZ ZK proof system" in the singular, because the architecture is built to run several systems at once.
 
 ## Latency and synchronous composability

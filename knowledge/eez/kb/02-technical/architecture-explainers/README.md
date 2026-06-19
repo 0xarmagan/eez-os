@@ -13,10 +13,13 @@ These are reference-grade explainers, not approved external comms. Any externall
 5. [The Composer](05-the-composer.md): permissionless bundler; `postAndVerifyBatch`; the open incentive and mempool questions.
 6. [EEZ Node Architecture](06-node-architecture.md): sequencer-per-chain + composer binaries; sync vs async blocks; followers; known open gaps.
 7. [Real-Time Proving with ZisK](07-real-time-proving-zisk.md): ADSTF (deck term); EEZ Trace blob format; the recursion pipeline; per-rollup proving threshold; the <3s target.
+8. [Gnosis Chain: The First EEZ Chain](08-gnosis-chain-first-eez-chain.md): case study from Phillipe Schommers' Dappcon talk; the four integration points; multisig-today, zk-tomorrow; the running Chiado prototype; pre-GIP.
+
+Additional source for explainers 7 and 8: `../../sources/dappcon-2026-realtime-proving-talk.md` and `../../sources/dappcon-2026-gnosis-chain-eez-talk.md`.
 
 ## Reading order
 
-Explainers 1–3 are conceptual (the model, the mechanism, the properties). Explainers 4–6 are operational (chain types, the composer, the node software). Explainer 7 is the proving layer that makes the synchronous model possible. They cross-reference each other and can be read independently.
+Explainers 1 to 3 are conceptual (the model, the mechanism, the properties). Explainers 4 to 6 are operational (chain types, the composer, the node software). Explainer 7 is the proving layer that makes the synchronous model possible. Explainer 8 is a case study: Gnosis Chain becoming the first EEZ chain. They cross-reference each other and can be read independently.
 
 ## Roadmap context (handle with care)
 
