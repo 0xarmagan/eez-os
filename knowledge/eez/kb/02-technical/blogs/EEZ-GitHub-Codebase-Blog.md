@@ -10,7 +10,7 @@ sources: "eez-association GitHub org (re-verified 2026-06-19): eez-core-protocol
 
 ## EEZ's Technical Stack: What's Built and How It Works
 
-![The three EEZ repositories and what each one does](diagrams/EEZ-Stack-Diagram.png)
+![The three EEZ repositories and what each one does](../diagrams/EEZ-Stack-Diagram.png)
 
 ### 1. What EEZ is building and where it stands
 

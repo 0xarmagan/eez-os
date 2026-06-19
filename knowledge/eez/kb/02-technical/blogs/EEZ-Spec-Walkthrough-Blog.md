@@ -9,7 +9,7 @@ sources: eez-association/eez-core-protocol (formerly sync-rollups-protocol), COR
 
 # The Architecture Behind EEZ's Synchronous Settlement
 
-![postAndVerifyBatch settles every rollup atomically, verified per rollup](diagrams/EEZ-Settlement-Diagram.png)
+![postAndVerifyBatch settles every rollup atomically, verified per rollup](../diagrams/EEZ-Settlement-Diagram.png)
 
 EEZ enables rollups to settle atomically on Ethereum and compose synchronously. A smart contract on one chain calls another, gets a return value, and the whole execution either commits or reverts in a single L1 block. The mechanism that makes this possible is specified across several documents in the `eez-core-protocol` repository (branded Sync Rollups), the main two being `CORE_PROTOCOL_SPEC.md` and `EXECUTION_ENTRY_SPEC.md`, with `MULTI_PROVER_SPEC.md` covering verification. Together they are the most complete public specification of a synchronous based-rollup system on Ethereum. This post walks through what they define.
 
