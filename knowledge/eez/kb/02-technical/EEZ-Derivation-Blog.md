@@ -1,13 +1,13 @@
 ---
-title: EEZ Rollups Are Trustless by Design — Here's the Mechanism
+title: EEZ Rollups Are Trustless by Design, Here's the Mechanism
 platform: Paragraph / Mirror
 byline: Armagan Ercan
-date: 2026-06-06
+date: 2026-06-19
 status: draft
-sources: eez-association/sync-rollups-composer — DERIVATION.md, Cargo.toml (adversarially verified)
+sources: eez-association/sync-rollups-composer, docs/DERIVATION.md, Cargo.toml (re-verified 2026-06-19); forward note on eez-core-protocol refactor
 ---
 
-# EEZ Rollups Are Trustless by Design — Here's the Mechanism
+# EEZ Rollups Are Trustless by Design, Here's the Mechanism
 
 **by Armagan Ercan**
 
@@ -25,7 +25,7 @@ That is what "based rollup" means when it is used precisely. DERIVATION.md puts 
 
 ## What derivation means in practice
 
-Most rollup designs require more than L1 to reconstruct their chain history. A sequencer feed, a data availability layer, a private mempool, a side-channel RPC — some form of off-chain input sits between the raw Ethereum state and the full L2 history. That is not always a safety problem, but it is a trust dependency. If that off-chain source is unavailable, unreachable, or selectively censored, reconstruction breaks.
+Most rollup designs require more than L1 to reconstruct their chain history. A sequencer feed, a data availability layer, a private mempool, a side-channel RPC. Some form of off-chain input sits between the raw Ethereum state and the full L2 history. That is not always a safety problem, but it is a trust dependency. If that off-chain source is unavailable, unreachable, or selectively censored, reconstruction breaks.
 
 The EEZ design removes that dependency entirely. `BatchPosted` is the only L1 event required for full chain derivation. A node that watches Ethereum and catches every `BatchPosted` emission from `Rollups.sol` has everything it needs to reconstruct the complete L2 history.
 
@@ -45,7 +45,7 @@ The EEZ formula replaces that trust assumption with arithmetic.
 
 `l2_timestamp = deployment_timestamp + ((l2_block_number + 1) × 12s)`
 
-`deployment_timestamp` is the timestamp at which the rollup was registered on L1. It is immutable. `l2_block_number` is the position of the block in the chain — derivable by counting blocks from genesis. Multiply the block position by 12 seconds and add the deployment anchor. The result is the canonical timestamp for that block.
+`deployment_timestamp` is the timestamp at which the rollup was registered on L1. It is immutable. `l2_block_number` is the position of the block in the chain, derivable by counting blocks from genesis. Multiply the block position by 12 seconds and add the deployment anchor. The result is the canonical timestamp for that block.
 
 There is no input to this formula that originates off-chain. No sequencer chooses the timestamp. No oracle provides current time. The formula produces a valid timestamp for any block at any point in the future, and that timestamp is independently verifiable by anyone running the derivation.
 
@@ -55,7 +55,7 @@ This matters for auditability. An independent researcher, a regulatory body, or 
 
 ## reth as upstream pin, not a fork
 
-sync-rollups-composer is a Rust rollup node. It is built on reth — specifically on `paradigmxyz/reth`, the upstream repository. This is not a fork. The Cargo.toml pins a version of upstream reth. That distinction matters.
+sync-rollups-composer is a Rust rollup node. It is built on reth, specifically on `paradigmxyz/reth`, the upstream repository. This is not a fork. The Cargo.toml pins a version of upstream reth. That distinction matters.
 
 A fork introduces maintenance debt. Custom patches diverge from upstream over time. Security fixes require manual backporting. The EVM execution layer starts to drift from the public codebase that the broader community audits. Operators who want to inspect the execution layer have to diff against a moving target.
 
@@ -83,6 +83,10 @@ This separation of liveness and safety is the key property for long-term trustle
 
 For anyone evaluating EEZ rollups for integration: DERIVATION.md is the document that answers the trust question. It specifies exactly what a node needs to reconstruct the chain and exactly how timestamps are computed.
 
-Read it alongside `Rollups.sol`. The based rollup property described here is not a positioning claim. It is a spec — derivable, verifiable, and falsifiable. If a node running the derivation process does not produce the expected chain, something in the spec or the implementation is wrong. That is a testable statement.
+Read it alongside `Rollups.sol`. The based rollup property described here is not a positioning claim. It is a spec, derivable, verifiable, and falsifiable. If a node running the derivation process does not produce the expected chain, something in the spec or the implementation is wrong. That is a testable statement.
 
-The codebase is in `eez-association/sync-rollups-composer`. DERIVATION.md is in the repository root.
+The codebase is in `eez-association/sync-rollups-composer`. DERIVATION.md is in `docs/`.
+
+**A note on where the protocol is heading.** This post describes the `sync-rollups-composer` node as it stands today, which targets the `Rollups.sol` contract interface (single `postBatch` submission, ECDSA proof). The L1 protocol-contract layer has since been refactored in a separate repository, `eez-association/eez-core-protocol` (renamed from `sync-rollups-protocol`). That refactor moves to a multi-prover `postAndVerifyBatch` model with per-rollup proving thresholds and an `EEZ.sol` registry. The composer node described here is at an earlier snapshot and targets the interface that is being refactored, so if you see different contract and function names in the protocol repo, that is why. The trustless-derivation property described in this post is unchanged by the refactor: L1 remains the only data source, and any node can still reconstruct the full chain from L1 alone.
+
+As evidence the model is being put into practice: at Dappcon Berlin (June 2026), Gnosis Chain announced it will become the first EEZ chain, with a running prototype on the Chiado testnet. This is roadmap and pre-GIP, not a shipped mainnet claim, but it shows the derivation design moving from spec to deployment.
