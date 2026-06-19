@@ -1,6 +1,6 @@
 # The Composer
 
-*Explainer 5 of 7. Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon 2026 EEZ Workshop, Jordi Baylina, 17 June 2026). Treat the deck as engineering-level founding material, not approved EEZ comms.*
+*Explainer 5 of 8. Sources: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon 2026 EEZ Workshop, Jordi Baylina, 17 June 2026) and `knowledge/eez/sources/dappcon-2026-gnosis-chain-eez-talk.md` (Phillipe Schommers, the on-L1 seeding mechanism and private mempool). Treat as engineering-level founding material, not approved EEZ comms.*
 
 The Ethereum Economic Zone (EEZ) is an economic zone built on Ethereum. It proves the combined execution of many rollups as a single, synchronous run. The composer is the piece of node software that pulls that off. This explainer covers what the composer does, why anyone can run one, the parts inside it, and the design questions the deck leaves open.
 
@@ -17,6 +17,16 @@ In more detail, the composer takes the last n blocks across the rollups it serve
 The order matters. The composer does not send anything to L1 raw. It assembles a bundle, the provers do their work on it, and only then does the bundle reach L1. The composer streams helper data to the provers so they can start early, which keeps the whole pipeline inside an L1 slot. The deck targets overlapped bundle building and proof building at under three seconds in total.
 
 A few accuracy points sit underneath this. The composer submits to provers, plural. It submits proofs from the proving systems each rollup has configured. EEZ is proof-system agnostic, so every rollup chooses its own systems and its own threshold. The count is the rollup's configuration, not a fixed minimum set by the protocol. The architecture diagram draws a single `prover` box, but that is a topology abstraction. Do not read it as a single prover. The work the composer settles is cross-chain interaction expressed as normal Ethereum CALL and RETURN between contracts on different rollups, recorded in the EEZ Trace blob format. Inside a native rollup these operations are execution entries, not transactions. The L1 layer and partner chains keep their own transaction model.
+
+---
+
+## How the composer lands a cross-chain call on L1
+
+Phillipe Schommers' Dappcon talk makes the on-L1 mechanism concrete, and it is worth spelling out, because Ethereum cannot pause execution mid-transaction to wait for another chain. Say a contract A on Ethereum calls B-star, the proxy for contract B on Gnosis Chain, and B returns 42. On a normal chain you cannot stop A, go run B, and come back. So the composer works ahead of the user.
+
+The composer simulates both chains together and produces the execution tables (the EEZ Trace) for the call and its return. Then it seeds the result on L1 before the user's transaction runs: it inserts into the EEZ contracts a statement that, in this specific state, a call from A to B-star returns 42. When the user's transaction then executes and B-star is called, B-star reads that pre-seeded answer from the EEZ contracts. The seeded result and the user transaction travel together. The composer's `postAndVerifyBatch` carries the blobs, call data, state roots, and the execution tables, and the user's L1 transaction follows as an MEV-style bundle that an L1 builder executes. The whole thing is valid for one specific block only. If the bundle is not included, for example because it did not pay enough gas, it reverts, and the synchronous call simply does not happen.
+
+This is also why cross-chain transactions want a private mempool. If a user sends a cross-chain L1 transaction to the public mempool, an ordinary Ethereum validator can pick it up and include it before the composer has seeded the state. The B-star call then reverts, because the answer was never written. This is not malicious front-running by the composer. It is an ordering requirement: the seeded state has to be in place before the call runs, so the orderflow needs to reach the composer first.
 
 ---
 

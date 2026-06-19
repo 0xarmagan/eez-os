@@ -40,6 +40,18 @@ Everything else stays sovereign: block production, permissioning, proofs, and da
 - This validates the corrected multi-prover framing: a "proof system" can be a BLS multisig (validator attestation), not only a zk system, and the M-of-N threshold is the chain's choice. Do not say EEZ requires zk or a minimum of two zk provers.
 - Mainnet is not live. The prototype is on Chiado. Frame Gnosis-on-EEZ as roadmap.
 
+## From the spoken talk (transcript, beyond the deck)
+- **Gnosis Chain specifics:** live since 2018; ~5s blocks (vs 12s ETH); faster epochs/finality; GNO is an ERC-20 staking token, not the native asset; same client/architecture/beacon chain. Runs Circles, Gnosis Pay.
+- **Composer v1 (start narrow):** one incoming call from L1, then one call into Gnosis Chain, then one return. Not full nesting, but ~70-80% of the value (e.g. swap on L1, bridge to Gnosis, liquidate, bridge back, one atomic tx). Full nested composability is the longer-term goal.
+- **Six blocks per Ethereum block:** 2s blocks => 6 per 12s ETH block; one can be a sync block (synchronous cross-chain txs), the rest pure L2, all signed by the sequencer (permissioned at first). If no cross-chain txs, build pure L2 and anchor state to L1 every few minutes (state roots + call data).
+- **Why not zk yet:** want >=3 client implementations + zk provers all proving in real time first; real-time zk still a bit too slow for now. Multisig first is a move-fast choice.
+- **Why sequenced (Gasper not built for it):** 2s blocks hard in a fully-decentralised attest-every-block design; composing is heavy (run Gnosis + Ethereum + other L2s); Gasper finalises on its own, not following another chain's reorgs. Don't reinvent the consensus clients.
+- **Validators:** reuse the existing bridge validators as chain validators. Each runs 3 client implementations, validates the sequencer+composer block locally, attests; aggregated attestations posted with postAndVerifyBatch = the proof. Current Gnosis validator set most likely deprecated; DAO decides via a GIP.
+- **Follower nodes:** receive blocks from the sequencer every 2s, validate each posted batch (sync block or anchor) against L1; private RPC and local sims unchanged. Mostly a client update.
+- **Trade-off:** ripping out the beacon chain loses some functionality, e.g. blobs; leans on Ethereum. Finality goes up slightly but inherits Ethereum's future fast finality (3SF).
+- **On-L1 seeding / private mempool:** the composer simulates both chains, produces execution tables, and seeds the result into the EEZ contracts before the user's tx runs (e.g. "A calling B* returns 42 in this state"), so B* reads the pre-seeded answer. Bundled with postAndVerifyBatch + the user's L1 tx as an MEV bundle for one specific block; reverts if not included. Cross-chain txs need a private mempool, or a normal Ethereum validator includes the L1 tx before the state is seeded and B* reverts. Not malicious front-running, an ordering requirement.
+- **Timeline (aggressive):** prototype exists (composer + sequenced chain); shadow fork on Chiado testnet targeted end of September; Gnosis Chain itself end of December (limited EEZ functionality first); full nesting + zk proving later. All via a GIP.
+
 ---
 
-*Filed 2026-06-19. Companion to `dappcon-2026-eez-node-architecture.md` and `dappcon-2026-realtime-proving-talk.md`.*
+*Filed 2026-06-19; spoken-talk section added 2026-06-19. Companion to `dappcon-2026-eez-node-architecture.md`, `dappcon-2026-realtime-proving-talk.md`, and `dappcon-2026-martin-eez-overview-talk.md`.*

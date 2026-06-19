@@ -6,7 +6,9 @@ This explainer is a case study. The other explainers describe EEZ in general. Th
 
 ## Why Gnosis Chain
 
-Gnosis Chain has run since 2018 and is, in Phillipe's words, basically Ethereum with slight variations. That closeness to Ethereum is what makes the move feasible. The pitch is direct: becoming an EEZ chain is "not an add-on. It touches blocks, proofs, validators, and consensus." So this is a real change to the chain, not a contract deployed on top.
+Gnosis Chain has run since 2018 and is, in Phillipe's words, basically Ethereum with slight variations: faster blocks (five seconds today, against twelve on Ethereum), faster finality, and GNO as an ERC-20 staking token rather than the native asset, but the same client architecture and beacon chain. It is a live network, running apps like Circles and Gnosis Pay. That closeness to Ethereum is what makes the move feasible. The pitch is direct: becoming an EEZ chain is "not an add-on. It touches blocks, proofs, validators, and consensus." So this is a real change to the chain, not a contract deployed on top.
+
+The team is taking two parallel tracks, which Martin Köppelmann set out in his talk. Gnosis Chain itself will become an EEZ chain while keeping a sequencer and faster block times. In parallel, the team is building **Rollup One**, a fully based EEZ chain (no sequencer of its own, driven by Ethereum block timing), which starts life as a testnet called **Rollup Zero** and hardens into Rollup One over time. This explainer is mostly about the Gnosis Chain track.
 
 ## What makes an EEZ chain: four integration points
 
@@ -29,6 +31,8 @@ This is the most important design choice, and it is a clean illustration of how 
 
 The line that ties it together is "same protocol, different proof systems. Upgrading trust never changes the contracts." The zk provers later slot into the same M-of-N threshold the multisig used. Nothing in the EEZ contracts changes when the proof system does. This is exactly the per-rollup, owner-set threshold that the protocol code implements, so it is worth stating plainly: a proof system can be a validator multisig, not only a zk system, and the threshold is the chain's choice, not a fixed protocol rule.
 
+Concretely, the talk proposes reusing Gnosis Chain's existing bridge validators. Today those validators validate transactions and bridge them. Under EEZ they could become the chain's validators: each runs three different client implementations, validates locally that the block the sequencer and composer produced is correct, then attests. The aggregated attestations are posted with `postAndVerifyBatch`, and that aggregate is the proof. Phillipe gives two reasons zk is not the starting point. First, the team wants at least three independent client implementations and zk provers, all able to prove in real time, before relying on zk alone. Second, real-time zk proving is still a little too slow for the chain's needs today. Multisig first is a move-fast choice, not the end state.
+
 ## What is already built
 
 The team treats this as buildable, not theoretical. The timeline given was roughly three months from idea to a running prototype.
@@ -49,18 +53,27 @@ A point that matters for node operators: independent full nodes re-derive identi
 
 The headline choices are sequenced blocks, a multisig start, and blobs on Ethereum.
 
-- **Sequenced, two-second blocks.** EEZ needs sequencing for the synchronous sync block, and the Gnosis beacon chain was not built for it. So the EEZ version of the chain is sequenced, with two-second blocks.
+- **Sequenced, two-second blocks.** EEZ needs sequencing, and Gasper, the beacon chain's consensus, was not built for it. Phillipe gives three reasons. Two-second blocks are hard to run in a fully decentralised attest-every-block design. Composing is a heavy operation, because the composer has to run Gnosis Chain plus Ethereum plus any other chains it composes with. And Gasper finalises on its own rather than following another chain's reorgs, which is exactly what an EEZ chain has to do. Rebuilding all the consensus clients to fix this does not make sense, so the chain is sequenced.
+- **Six blocks per Ethereum block.** With two-second blocks, the chain produces six blocks per twelve-second Ethereum block. One of the six can be a sync block that carries synchronous cross-chain transactions. The rest are ordinary L2 blocks, all signed by the sequencer (permissioned to begin with). If there are no cross-chain transactions, the chain just builds ordinary L2 blocks and anchors its state to Ethereum every few minutes, posting the state roots and call data a follower needs.
 - **Multisig start.** As above, the proof system begins as a validator multisig and moves to zk over time.
-- **Blobs on Ethereum.** Cross-chain interactions are posted as blobs on Ethereum, which is also why data availability is a real dependency (see explainer 6).
-- **The validator set.** The current Gnosis validator set is most likely deprecated under this model. The decision sits with the DAO, not with the team.
+- **Blobs on Ethereum.** Cross-chain interactions are posted as blobs on Ethereum, which is also why data availability is a real dependency (see explainer 6). Note a trade-off: ripping out the beacon chain consensus means the chain loses some of what that layer provided, blobs among them, and leans on Ethereum instead.
+- **The validator set.** The current Gnosis validator set is most likely deprecated under this model. The decision sits with the DAO, through a GIP, not with the team.
 
-## Timing: why pre-building
+## Composer v1: start narrow
 
-On a twelve-second Ethereum slot, the visible cost of EEZ is mostly timing, because proving has to finish before the L1 block. The talk's answer is pre-building. The chain builds block t+10 and the sync block early, at around t+8, so the prover has time to finish before the L1 block closes. The empty blocks at the end of the slot disappear, and the pre-built ones run on mildly stale data. This is the same pipelining Jordi describes for proof generation in explainer 7, applied at the block-building level.
+The team plans to ship a deliberately limited composer first. Composer v1 allows one incoming call from Ethereum, then one call into Gnosis Chain (which can do whatever it likes internally), then one return back to Ethereum. That is not full nested composability, but Phillipe estimates it delivers seventy to eighty per cent of the value: it already covers patterns like swapping on Ethereum, bridging to Gnosis Chain, liquidating a position there, and bridging back, all in one atomic transaction. Full nested composability, many hops back and forth in one transaction, is the longer-term goal.
+
+## Follower nodes
+
+For node operators, the model changes but stays familiar. A follower node receives blocks from the sequencer every two seconds, then checks each batch posted to Ethereum, whether a sync block or a periodic anchor, against the state it received from the sequencer. So it does not have to trust the sequencer's word; it confirms against L1. Running a private RPC, doing local simulations, and so on stay the same. For most operators this is a client update.
+
+## Timing: pre-building (a future, zk-only concern)
+
+On a twelve-second Ethereum slot, the visible cost of EEZ is mostly timing. Two timing issues are still open. First, L1 inclusion is not known quickly enough: if the chain only learns after a couple of seconds that its bundle landed, it is unclear which block to build the next one on, so it may build variations and keep the right one. Second, zk proving needs a few seconds at the end of a slot, which would force the last couple of blocks before a sync block to be empty. The proposed answer is pre-building: build those blocks early, around t+8, so the prover finishes before the L1 block closes, at the cost of running on slightly stale data. Importantly, Phillipe is explicit that this proving-time issue does not arise with the multisig proof system the chain starts on. It only becomes a concern once the chain moves to full zk proving. So pre-building is a future optimisation, not a day-one requirement.
 
 ## Where it is going
 
-The roadmap, in the team's framing, runs from a forum post to Gnosis Chain on the EEZ, and the closing pitch is "one zone, one UX." For the broader EEZ roadmap that this sits inside (Composer 1.0, Chain Zero, Connecting Gnosis Chain), see the series index.
+The roadmap, in the team's framing, runs from a forum post to Gnosis Chain on the EEZ, and the closing pitch is "one zone, one UX." The timeline Phillipe gave is aggressive: a working prototype already exists for both the composer and the sequenced chain; a shadow fork on the Chiado testnet is targeted for the end of September; and Gnosis Chain itself for the end of December, with limited EEZ functionality first. Full nested composability and zk proving follow. For the broader EEZ roadmap that this sits inside (Composer 1.0, Chain Zero, Connecting Gnosis Chain), see the series index. All of these dates are targets, not commitments, and the whole plan still runs through a GIP.
 
 ## Accuracy notes
 
