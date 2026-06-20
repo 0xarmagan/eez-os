@@ -42,12 +42,13 @@ The team treats this as buildable, not theoretical. The timeline given was rough
 - **February 2026:** Jordi Baylina's ethresear.ch post.
 - **April 2026:** a full prototype, a based rollup built on reth, live on Chiado, the Gnosis testnet.
 
-The prototype demonstrated four things, all as single atomic operations across chains:
+The prototype demonstrated three things, all as single synchronous calls across chains:
 
 - Instant deposits and withdrawals, atomic, in both directions.
 - Calls with return values, where L1 reads an answer computed on L2 inside the same transaction.
 - Cross-chain flash loans: borrow, work, and repay across chains in one transaction.
-- Nested calls five levels deep, with execution ping-ponging between chains mid-transaction.
+
+The running prototype does single synchronous calls only. Nested calls, with execution ping-ponging between chains mid-transaction, are not shipped; they come later (see "Where it is going").
 
 A point that matters for node operators: independent full nodes re-derive identical state from L1 alone. You do not need to trust the sequencer's word, and you do not need to follow the other chains. This is the client model from explainer 6, shown working.
 
@@ -75,7 +76,7 @@ On a twelve-second Ethereum slot, the visible cost of EEZ is mostly timing. Two 
 
 ## Where it is going
 
-The roadmap, in the team's framing, runs from a forum post to Gnosis Chain on the EEZ, and the closing pitch is "one zone, one UX." The timeline Phillipe gave is aggressive: a working prototype already exists for both the composer and the sequenced chain; a shadow fork on the Chiado testnet is targeted for the end of September; and Gnosis Chain itself for the end of December, with limited EEZ functionality first. Full nested composability and zk proving follow. For the broader EEZ roadmap that this sits inside (Composer 1.0, Chain Zero, Connecting Gnosis Chain), see the series index. All of these dates are targets, not commitments, and the whole plan still runs through a GIP.
+The roadmap, in the team's framing, runs from a forum post to Gnosis Chain on the EEZ, and the closing pitch is "one zone, one UX." A working prototype already exists for both the composer and the sequenced chain, and a deployment with the most recent contracts is live now on Chiado, the Gnosis testnet, with partial functionality. The reference chain, Rollup One, lands first as Rollup Zero around August. The team then targets a deploy on Ethereum mainnet itself by the end of summer. That mainnet deploy is communicated as a testnet, not a production network: it can hold real value, but it is only "slightly audited," carries a "use at your own risk" framing, and comes with a big warning not to use it with real money. Gnosis Chain itself is targeted to join EEZ as an L2 optimistically by the end of the year, with limited functionality first: synchronous single calls, not unlimited nested back-and-forth. Full shared liquidity is targeted by the end of the year, but paired with limited capacity, and nested calls come later. The prover at the Gnosis launch is a compromise, not purely zk: hopefully partially zk plus a multisig or TEE (a "fancy multisig"). Full nested composability and full zk proving follow. For the broader EEZ roadmap that this sits inside (Composer 1.0, Chain Zero, Connecting Gnosis Chain), see the series index. All of these dates are targets, not commitments, and the whole plan still runs through a GIP.
 
 ## Accuracy notes
 

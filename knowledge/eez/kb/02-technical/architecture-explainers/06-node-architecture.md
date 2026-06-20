@@ -32,13 +32,23 @@ The reason the composer is a separate binary is that its work spans all particip
 
 ## The block and fork model
 
-The top of the diagram is a timeline. L1 advances `L1-100 → L1-101 → L1-102` with normal L1 block propagation. Below it, each EEZ chain produces its own blocks, and those blocks come in two kinds.
+The top of the diagram is a timeline. L1 advances `L1-100 → L1-101 → L1-102` with normal L1 block propagation. Below it, each EEZ chain produces its own blocks, and those blocks come in three kinds.
 
-### Async blocks versus sync blocks
+### The three block kinds
 
-Most blocks on an EEZ chain are async blocks. An async block contains work that touches only its own chain. It does not depend on anything happening on another chain in the same step, so it can be produced on the chain's own schedule without coordination. On the native path, a native rollup interaction settles in roughly twelve seconds. The async path, used when an interaction crosses to L1 without that native coupling, settles in roughly twenty minutes. Name the path beside any figure; there is no single finality number for EEZ as a whole.
+Most blocks on an EEZ chain are **L2-only (async) blocks**. An L2-only block contains work that touches only its own chain. It does not depend on anything happening on another chain in the same step, so it can be produced on the chain's own schedule without coordination, and it is sequencer-controlled. On the native path, a native rollup interaction settles in roughly twelve seconds. The async path, used when an interaction crosses to L1 without that native coupling, settles in roughly twenty minutes. Name the path beside any figure; there is no single finality number for EEZ as a whole.
 
-A sync block is different. A sync block is the unit that carries a cross-chain interaction, the kind that has to resolve atomically with work on another chain. The diagram shows `sync block 1` and `sync block 2` on EEZ chain 1, alongside a step it labels "sync block preparation (chain split)." Preparing a sync block splits the chain's normal flow so the cross-chain step can be assembled and proven as one thing rather than being interleaved with unrelated local work.
+A **sync block** is different. A sync block is the unit that carries a cross-chain interaction, the kind that has to resolve atomically with work on another chain. It carries a strong commitment to a specific Ethereum block. The diagram shows `sync block 1` and `sync block 2` on EEZ chain 1.
+
+A third kind is the **L1-hash-update block**. Its job is to push the latest L1 state root onto the L2 so that static reads against Ethereum state can be served cheaply. Static reads on L2 are close to free, so the chain wants the current Ethereum state root available locally as soon as possible. This block kind carries no cross-chain interaction; it just refreshes the L1 view.
+
+The reorg behaviour follows from the kind. An L2-only block is sequencer-controlled and never needs to reorg. A sync block (and an L1-hash-update block, which also commits to an L1 view) reorgs if the Ethereum block it is committed to reorgs. The only genuinely open part is a per-step cancellation protocol for an in-flight proving run when an L1 reorg invalidates a sync block; that is addressed under the open gaps.
+
+### How the chain handles a pending cross-chain step
+
+When a cross-chain interaction is pending, the sequencer has to commit to an assumed L1 incoming call and assumed return values before the next L1 block lands, because it can only confirm once that L1 block propagates. This is the "time-travelling" problem the diagram gestures at with `sync block preparation`.
+
+The **current first implementation handles this naively: it pauses the chain** for the few seconds before the next L1 block while the synchronous block is built and the assumed values are committed, and it cannot confirm until the L1 block propagates. The planned optimisation is the chain split: rather than stalling, keep building L2-only, state-independent blocks (for example simple token transfers that do not depend on the pending outcome) and give confirmations for those, while only the fork-dependent work waits on the cross-chain resolution. That split is roadmap work, not the behaviour of the first version.
 
 ### Sync blocks are event-triggered
 
@@ -48,7 +58,7 @@ This matters for how you reason about cost and coordination. Coordination overhe
 
 ### Independent of fork versus dependent of fork
 
-The diagram tags transactions two ways: "independent of fork" and "dependent of fork." A transaction that is independent of the fork does not care which way a pending cross-chain decision resolves; it can be included regardless. A transaction that is dependent of the fork does care, because its validity is tied to the outcome of the cross-chain step that the sync block is resolving. That dependence is why the chain splits during sync-block preparation: the fork-dependent work has to be held against the outcome, while fork-independent work can proceed. The diagram also shows "unused blocks," which are the branches of that split that do not end up on the final chain once the cross-chain outcome is known.
+The diagram tags transactions two ways: "independent of fork" and "dependent of fork." A transaction that is independent of the fork does not care which way a pending cross-chain decision resolves; it can be included regardless. A transaction that is dependent of the fork does care, because its validity is tied to the outcome of the cross-chain step that the sync block is resolving. That dependence is the basis of the planned chain split: the fork-dependent work has to be held against the outcome, while fork-independent work can proceed. The first implementation does not do this yet (it pauses the chain instead); the split is the optimisation. The diagram also shows "unused blocks," which are the branches of that split that do not end up on the final chain once the cross-chain outcome is known.
 
 ## Node and follower roles
 
@@ -82,7 +92,7 @@ The diagram is a correct topology sketch, not a finished specification. Several 
 
 **Single points of liveness.** There is one sequencer per chain, with its key in the process and no standby shown, and a single composer per binding deployment. The diagram does not show failover for either.
 
-**Composer economics.** The deck states openly that fee incentives for composers are undefined. Binding mode requires commitment, but cross-chain fee revenue is irregular, so rational operators might default to non-binding or optimistic behaviour in quiet periods. This is a named open question, not a design that has been settled.
+**Composer economics.** Fee incentives for composers are explicitly not defined in this first version. The need for them is acknowledged, and candidate mechanisms have been named (fees, higher fees, private order flow, or L2 fees), but none has been settled on. Binding mode requires commitment, while cross-chain fee revenue is irregular, so rational operators might default to non-binding or optimistic behaviour in quiet periods. This is a named open question, not a design that has been settled.
 
 **Data availability dependence.** In the DAPPCon talk Jordi named data availability as a limitation. EEZ puts a lot of information into blobs, so the system depends on high Ethereum data availability, and EEZ's own throughput is bounded by how much L1 can carry. This is an external dependency on Ethereum scaling, not something EEZ resolves on its own.
 

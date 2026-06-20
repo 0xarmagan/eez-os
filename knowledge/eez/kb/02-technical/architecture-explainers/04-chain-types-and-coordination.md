@@ -24,7 +24,7 @@ Native rollups that use ETH as their native asset can include ETH directly in CA
 
 Creation is permissionless. Anyone can create a native rollup and opt it in, and a rollup can opt out again. No committee gates entry.
 
-On finality, native rollups follow the native path, which targets roughly 12 seconds. That is distinct from the async path, which targets roughly 20 minutes. Name the path whenever you cite a figure. There is no single finality number for EEZ as a whole.
+On finality, native rollups follow the synchronous native path, which targets roughly 12 seconds, de facto in step with Ethereum. That is distinct from the async mode, which is not a slower settlement path but a cheaper read mode. An async static call reads against a possibly-outdated L1 block header, which is close to free because it stays on the L2; getting the latest current state instead means executing the call on Ethereum. Do not conflate the async read mode with a 20-minute finality figure. The roughly 12-to-20-minute number that appears elsewhere is the stall cost of a full-chain pessimistic lock, covered under coordination methods, not a finality path.
 
 ## Chain type 2: based and centralized sequencer rollups
 
@@ -46,6 +46,10 @@ This keeps the validium's data-availability savings for its own internal activit
 
 In the DAPPCon talk Jordi made the access split precise. To rebuild a validium's full state you need extra data from sources outside the blobs, which is the validium's own data-availability arrangement. To route calls to or from the validium, the composer needs access to that data, because it has to see the cross-chain effect to include it. Other chains connecting to the validium do not need the full validium state. They only need the interactions recorded in the blobs, the calls and returns that actually cross the boundary. So the heavier data requirement falls on the composer that connects the validium, not on every chain in the zone.
 
+## Chain type 4: non-EVM and specialized state transition functions
+
+Jordi was explicit in the workshop that a joining chain does not have to be EVM at all. Because a native rollup brings its own state transition function, that function can be anything. He named privacy chains as the example, a Zcash-like design or a privacy-pool model, and also EVM plus custom precompiles. His framing was "a way of extending Ethereum in your own way". The zone does not require a single execution model. A chain can run a specialized STF, keep its own semantics, and still join cross-chain flows through the same proxy and coordination machinery as the other types. This is the open end of the chain-type list: the deck's named categories are not a closed set, and a sufficiently different STF is welcome as long as it meets the same cross-chain visibility and proving obligations.
+
 ## Coordination methods: optimistic and pessimistic
 
 Cross-chain inclusion needs a way to keep the participating chains consistent while a cross-chain interaction is being assembled and proven. The deck names two methods. They sit on a liveness-versus-safety trade-off, and neither is universally better.
@@ -54,13 +58,13 @@ Cross-chain inclusion needs a way to keep the participating chains consistent wh
 
 The optimistic method proceeds on the assumption that the cross-chain transaction will be included as planned, and it relies on reorgs to clean up if that assumption breaks. The chain keeps producing blocks. If the cross-chain interaction ends up not landing the way it was assumed, the affected portion is reorged out and rebuilt.
 
-The benefit is liveness and lower latency. The chain does not stall waiting for confirmation from elsewhere. It keeps moving. The cost is that recently produced blocks are not safe until the cross-chain assumption settles. A reorg can undo work. This method fits chains and applications that value continuous progress and can tolerate that recent blocks may be revised. It is the looser, faster option.
+The benefit is liveness and lower latency. The chain does not stall waiting for confirmation from elsewhere. It keeps moving. The cost is that recently produced blocks are not safe until the cross-chain assumption settles. A reorg can undo work. The dependency also runs the other way: because a sync block commits to a specific Ethereum block, an Ethereum reorg forces the L2 to reorg its corresponding sync and async blocks to stay in step. The L2's optimistic blocks inherit Ethereum's reorg risk. This method fits chains and applications that value continuous progress and can tolerate that recent blocks may be revised. It is the looser, faster option.
 
 ### Pessimistic: locking
 
 The pessimistic method locks before it proceeds. It does not assume inclusion will succeed. It secures the relevant state so that the cross-chain interaction either completes or fails cleanly, without a reorg. The deck adds an important qualifier. The lock is not necessarily the full chain. The system can lock only the part that the cross-chain interaction touches, rather than freezing everything.
 
-The benefit is safety. There is no reorg risk on the locked state, because nothing conflicting can be produced while the lock holds. The cost is liveness and latency. Locked state cannot make independent progress until the lock clears, and acquiring the lock adds delay. This method fits high-value or hard-to-reverse interactions where a reorg would be unacceptable. It is the stricter, slower option, made more usable by the fact that the lock can be scoped to only the affected state.
+The benefit is safety. There is no reorg risk on the locked state, because nothing conflicting can be produced while the lock holds. The cost is liveness and latency. Locked state cannot make independent progress until the lock clears, and acquiring the lock adds delay. Locking the full chain is the inefficient extreme. Jordi put the cost of a full-chain lock at roughly 12 to 20 minutes of stall, because the chain has to send to L1 and wait there before it can release. That figure is the price of the pessimistic full-chain lock, not a finality "path". Scoping the lock to only the affected state is what makes the method usable. This method fits high-value or hard-to-reverse interactions where a reorg would be unacceptable. It is the stricter, slower option, made more usable by the fact that the lock can be scoped to only the affected state.
 
 ### Choosing between them
 
@@ -81,7 +85,7 @@ There is an honest cost to name. Binding mode asks the sequencer for a commitmen
 ## Accuracy notes
 
 - EEZ is not deployed yet. The roadmap ends with Composer 1.0, Chain Zero, and connecting Gnosis Chain (deck slide 55). Frame any participation question as a roadmap question, not a "today" one.
-- Finality has two paths. The native path targets roughly 12 seconds and the async path targets roughly 20 minutes. Always name the path beside the figure. No single number describes EEZ as a whole.
+- The synchronous native path targets roughly 12 seconds, de facto in step with Ethereum. "Async" is a read mode, not a finality path: an async static call reads a possibly-outdated L1 header cheaply on the L2, while the latest state requires executing on Ethereum. The roughly 12-to-20-minute figure is the stall cost of a full-chain pessimistic lock, not a settlement path. Do not conflate the two.
 - EEZ is an economic zone built on Ethereum, not "an L2". Native rollups are an L2 construction that EEZ builds on top of.
 - Cross-chain interaction uses proxies, not bridges. Proxies are synchronous and share state. Cross-rollup ETH movement uses rollup-level ETH accounting in L1, not a bridge.
 - Inside EEZ native rollups, the operations are execution entries, not transactions. "Transaction" is acceptable for L1 and for partner chains (based, centralized sequencer, validium) that run their own transaction model, scoped to them.

@@ -62,13 +62,13 @@ So the precise framing is this. A bridge connects two separate states. A proxy e
 
 ---
 
-## Cross-rollup ETH accounting
+## Cross-rollup ETH transfers
 
-Native rollups can include ETH inside a cross-rollup `CALL`. The value does not get wrapped, so EEZ needs a way to keep the books straight when ETH moves between rollups.
+Native rollups can include ETH inside a cross-rollup `CALL`. The value does not get wrapped, so the transfer rides on the call itself rather than on a separate ledger.
 
-It does this with **rollup-level ETH accounting maintained in L1**. The accounting tracks how much ETH each native-ETH rollup holds relative to the others, and it lives on L1 where every chain can see it. A cross-rollup ETH transfer updates that L1-level accounting rather than minting a wrapped token on the receiving side.
+A cross-rollup ETH transfer is a plain `CALL` carrying value. You send ETH to the proxy on L1, then make the call with value attached, and the EEZ contract records that interaction in the Execution Table. There is no dedicated per-rollup ETH ledger tracking balances; the movement is just another entry in the table, like any other call and return.
 
-L1 is the settlement point and the shared record. The ETH itself stays native on each side. The accounting on L1 keeps the totals honest across rollups.
+L1 is the settlement point and the shared record. The ETH itself stays native on each side. The Execution Table keeps the record honest across rollups.
 
 ---
 
@@ -76,9 +76,51 @@ L1 is the settlement point and the shared record. The ETH itself stays native on
 
 What you write looks ordinary. Your contract on rollup A calls a contract on rollup B. In your code it is a `CALL` to an address, with a `RETURN` coming back, and ETH attached if you need it. You do not write bridge glue, you do not mint or burn a wrapped token, and you do not wait on a relayer.
 
-What happens underneath. On L1, the target contract is represented by its proxy (the starred contract). The proxy writes the `CALL` into the Execution Table on L1. The combined execution across the involved rollups is proved together by the rollups' configured proving systems, with each context switch recorded in the EEZ Trace. The `RETURN` is written back into the Execution Table, and any ETH movement updates the rollup-level accounting on L1.
+What happens underneath. On L1, the target contract is represented by its proxy (the starred contract). The proxy writes the `CALL` into the Execution Table on L1. The combined execution across the involved rollups is proved together by the rollups' configured proving systems, with each context switch recorded in the EEZ Trace. The `RETURN` is written back into the Execution Table, and any ETH movement rides on the call as value, recorded in the same table.
 
 The point of the design is that the second paragraph stays out of your way. You get a cross-chain call that reads and behaves like a same-chain call, with shared state and no wrapped assets, because the proxy and the Execution Table do the work on L1.
+
+---
+
+## How the proxy gets its answer: the composer and the 3-tx bundle
+
+A proxy on L1 does not hold the contract's logic. So when it is called, where does its return value come from? The **composer** supplies it ahead of time.
+
+The composer anticipates the call, simulates it on the L2, and pre-loads a **lookup table** so the proxy can return the right value. It packages this as a bundle of up to **three transactions**:
+
+1. Deploy the proxy, if it does not already exist.
+2. Load the lookup table.
+3. The user transaction, which hits the proxy, looks up its answer, and returns it.
+
+Ordering inside the L1 block matters. The composer's transaction (carrying the proof and the lookup table) lands **first**, and the user transaction lands **second**. Only the user transaction triggers the L2 state change. If there is no user transaction, nothing happens on the L2.
+
+---
+
+## The one caveat: calling a proxy outside the bundle reverts
+
+There is a single sharp edge to know about. A proxy call made **outside the composer bundle reverts**, because the lookup is not found.
+
+This breaks any spec that must not revert. A `view` function like ERC-20 `balanceOf` is the obvious case: callers assume it always returns, and a revert there is a problem. As Jordi put it, depending on a revert for your logic is a design flaw.
+
+There is also **no public L1 mempool** for these calls. You cannot fire a proxy call from the open mempool and expect it to resolve. You route it through the composer, a bundle, or account abstraction. Plan for that path from the start.
+
+---
+
+## Who pays, and the gas picture
+
+The **user pays**, in the normal case. The user submits a small transaction that calls the proxy, plus a larger tip. The composer fronts the cost of the two extra transactions in the bundle, sends the three-transaction bundle to the builder, and the builder returns enough to the composer to cover them.
+
+This carries a **trust assumption**. A builder could include the user transaction without the composer transaction, in which case it reverts. The L1 protocol does not enforce that the two stay together.
+
+There is a cheaper path. With **account abstraction**, the whole sequence runs in **one transaction** using transient storage, and the user pays only if it does not revert. Rough figures from the workshop: the full real-storage version is around **400K gas**, a normal L1 to L2 call is around **300K gas**, and the AA / transient-storage path is roughly **10x cheaper**. Always name the path beside the figure.
+
+---
+
+## A note on the proxies themselves
+
+The proxies are **stateless forwarders**. The bytecode encodes the EEZ contract plus the `(address, chain)` the proxy stands for, and nothing more. There is no storage and no locally stored owner; the owner is held in the EEZ contract. The proxy forwards any ETH it receives immediately, and it **cannot self-destruct**.
+
+Two identity points follow from this. When you call from L1, on the L2 the **`msg.sender` is the proxy of your EOA**, not your EOA directly. A system address calls the proxy, and the proxy is what the target contract sees. Each chain is a kind of domain name, and every address has a **deterministic alias (proxy) per chain**, fixed by `(address, chainID)`. Your L1 EOA keeps its own nonce; the L2 proxy has no real nonce of its own. Nonces stay on the originating chain.
 
 ---
 

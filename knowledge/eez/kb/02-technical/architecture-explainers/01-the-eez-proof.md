@@ -2,7 +2,7 @@
 
 ![Synchronous CALL/RETURN in one proven block vs an asynchronous bridge gap](../diagrams/01-the-eez-proof.png)
 
-*Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026, Jordi Baylina). Engineering-level founding material. Quote as Jordi's framing, not as approved EEZ comms. EEZ is at roadmap stage and is not deployed yet.*
+*Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026; Friederike, Martin, and Jordi Baylina). Engineering-level founding material. Treat the combined-execution sentence as a deck paraphrase, not a verbatim spoken quote, and treat all of this as founders' framing rather than approved EEZ comms. EEZ is at roadmap stage and is not deployed yet.*
 
 This explainer is for builders and partners who want to understand the core technical claim behind the Ethereum Economic Zone (EEZ): that it proves the combined execution of many rollups as a single, synchronous transaction. It explains what that sentence means, how the proof model works, why it counts as synchronous composability, what security it claims, and how it differs from bridging.
 
@@ -10,7 +10,7 @@ EEZ is an economic zone built on Ethereum. It is not an L2, and it is not equiva
 
 ## The core claim
 
-Jordi Baylina states it plainly in the DAPPCon deck: "EEZ proves the combined execution of many rollups as a single, synchronous transaction."
+The DAPPCon deck frames it this way: EEZ proves the combined execution of many rollups as a single, synchronous transaction. (This is a paraphrase of the deck's framing, not a verbatim spoken quote.) Friederike put the same idea live in plainer terms: EEZ collapses settlement to Ethereum's twelve seconds, so everything in the zone is "de facto synchronous with Ethereum."
 
 Read that carefully. The unit of proof is not one rollup. It is the combined execution across several rollups, treated as one atomic step. When a contract on one rollup calls a contract on another, both sides of that interaction land in the same proven batch. They either both happen or neither does.
 
@@ -24,7 +24,7 @@ A contract on Chain 1 issues a CALL to a contract on Chain 2. Chain 2 runs the c
 
 On L1, the participating contracts exist as proxies of their real counterparts on the rollup. In the deck's notation these proxies are drawn with a star: `UserAA(*)`, `Whitelist(*)`, `DAO(*)`. The proxy is the L1 stand-in for a contract whose real state lives on the rollup. The relevant L1 proxy writes the cross-chain calls and returns into an Execution Table on L1. That Execution Table is the concrete record of who called whom and what came back.
 
-These are proxies, not bridges. The distinction is load-bearing. Proxies are synchronous and they share state. A bridge does neither.
+These are proxies, not bridges. The distinction is load-bearing. The proxies themselves are stateless forwarders, holding no storage of their own (their bytecode just records which contract and chain they stand in for). What is synchronous and shares state is the EEZ zone: the atomic CALL-RETURN step resolves with shared state across chains, via these stateless proxies. A bridge does neither.
 
 ## Why this is synchronous composability
 
@@ -34,7 +34,7 @@ Asynchronous message passing works differently. Chain A emits a message. Some re
 
 EEZ collapses those hops. The CALL, the execution on the other chain, and the RETURN are all captured in one EEZ Trace (the deck calls this "the blob format"), which records each context switch between chains, including how reverts are handled. The proving pipeline then proves that whole trace as one thing. The composer builds the cross-chain bundle and the proof is built over it, with the overlapped bundle-building and proof-building targeting under three seconds so the result fits inside a single L1 slot.
 
-Because the interaction is proven as one step, there is no window in which Chain 1 has acted but Chain 2 has not. State is shared across the step rather than copied between chains after the fact.
+Because the interaction is proven as one step, there is no window in which Chain 1 has acted but Chain 2 has not. State is shared across the step rather than copied between chains after the fact. The shared state is a property of the EEZ step, not of the proxies, which are stateless forwarders carrying no storage of their own.
 
 ## The security claim
 
@@ -54,7 +54,7 @@ One accuracy note on speed, because it is easy to blur. EEZ does not have a sing
 
 ## A worked example
 
-Take the deck's own example: a user account on one rollup wants to vote in a DAO that lives on another rollup, and the DAO only accepts votes from whitelisted accounts.
+Take a deck illustration: a user account on one rollup wants to vote in a DAO that lives on another rollup, and the DAO only accepts votes from whitelisted accounts. (This is a teaching example. The actual live demo at the workshop was simpler: an ENS-style key-value registry, where the presenter registered a name from L1 through the proxy. It reverted several times before it worked, a reminder that this is early software.)
 
 On Rollup R2 you have three real contracts: `UserAA` (the user's account), `Whitelist` (the eligibility check), and `DAO` (the governance contract). On L1 these appear as proxies: `UserAA(*)`, `Whitelist(*)`, `DAO(*)`.
 
@@ -71,6 +71,10 @@ The outcome is atomic. If the whitelist check fails, the vote does not get recor
 
 For clarity, the operations happening inside each native rollup are execution entries, not "transactions." Transaction is the right word for the L1 layer. Inside a native rollup, the units are execution entries.
 
+One caveat is worth stating plainly. A proxy call only resolves when it is part of a composer bundle: the composer pre-registers a lookup entry that anticipates the call and stores the return the proxy hands back. Call a proxy on its own, outside that bundle, and it reverts because the lookup is not found. That breaks any spec that must not revert, such as an ERC-20 `balanceOf` read, so depending on a bare proxy call from the public mempool does not work. There is no public L1 mempool for these calls; they have to be routed through the composer, a bundle, or account abstraction.
+
+This also rests on a current trust assumption. The composer sends the builder a bundle in which the composer (lookup) transaction lands first and the user transaction lands second. A builder could in principle include the user transaction without the composer transaction, in which case the user transaction simply reverts. Nothing about the user loses funds, but the ordering is a builder convention at this stage, not something the L1 protocol enforces.
+
 ## Why builders should care
 
 If you build across multiple rollups today, you carry the cost of asynchrony yourself. You write relayer logic, you handle the case where one side confirmed and the other did not, and you trust whatever bridge sits in the middle. EEZ's claim is that you can stop doing that and write a plain contract-to-contract call, with the cross-rollup interaction proven atomically under Ethereum-grade security.
@@ -83,7 +87,7 @@ These guardrails were relevant to this document and were respected as follows:
 
 - **Economic zone, not L2.** EEZ is described throughout as an economic zone built on Ethereum and the shared proving and settlement layer, never as an L2 or a single network.
 - **Async vs native finality.** No single finality figure is applied to EEZ as a whole. The native path (~12 seconds) and the async path (~20 minutes) are named with their figures, and finality is kept distinct from the synchronous-composability claim.
-- **Proxies, not bridges.** The cross-chain mechanism is described as proxies, which are synchronous and share state. The bridging section contrasts EEZ with bridges rather than calling any EEZ mechanism a bridge.
+- **Proxies, not bridges.** The cross-chain mechanism is described as proxies, which are stateless forwarders; synchronous shared-state composability is attributed to the EEZ zone and its atomic CALL-RETURN step, not to the proxy objects. The bridging section contrasts EEZ with bridges rather than calling any EEZ mechanism a bridge.
 - **Multi-prover-capable, not single-prover.** EEZ is multi-prover-capable and proof-system agnostic. Each rollup sets its own threshold (which can be one or more proving systems), so there is no protocol-enforced minimum of two. The single `prover` box in the DAPPCon diagram is flagged as a topology abstraction, not a single-prover claim.
 - **Execution entries, not transactions.** Operations inside a native rollup are called execution entries. "Transaction" is reserved for the L1 layer and for the deck's own phrasing of the combined-execution claim.
 - **Not deployed yet.** The document states EEZ is at roadmap stage and explicitly says builders cannot join today, with the roadmap milestones named.

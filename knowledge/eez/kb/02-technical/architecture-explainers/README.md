@@ -37,8 +37,15 @@ Each explainer ends with an "Accuracy notes" section. The five distinctions enfo
 4. **Proof-system agnostic and multi-prover capable**: each rollup sets its own threshold (an M-of-N choice, one or more) on its manager contract. There is NO protocol-enforced minimum of two; the manager reverts `ThresholdNotMet` below the rollup's chosen threshold. Single `prover` boxes in diagrams are topology abstractions. Avoid singular framing for EEZ as a whole, but do not claim a contract floor of two.
 5. **Economic zone, not an L2**: EEZ is built on Ethereum, not equivalent to an L2.
 
+Two reviewer watch-items added after the BuilderRoom recording check:
+
+6. **The "one caveat"**: a proxy call outside the composer bundle reverts (lookup not found). This breaks must-not-revert specs (ERC-20 `balanceOf`); there is no public L1 mempool route — orderflow goes via composer/bundle/AA. Never describe EEZ cross-chain calls as fully transparent without this caveat.
+7. **Nested calls are roadmap, not shipped**: the running prototype does single synchronous calls; "nested back-and-forth" is explicitly later and excluded from the near-term Gnosis scope. Never list nested calls under "already built".
+
 ## Verification status
 
 The conceptual claims (proxies not bridges, execution entries, `postAndVerifyBatch`, sovereign rollups, per-rollup proving threshold) were verified on 2026-06-18 against the `eez-association/eez-core-protocol` repo (branded "Sync Rollups"). Corrections applied after that audit: the "minimum two provers" claim was removed (the protocol uses a per-rollup configurable threshold, not a global floor); `ADSTF` is flagged as the deck's conceptual term, not a literal type in the code; explainer 4 carries a scope caveat (the core protocol currently targets based rollups sharing the same L1 sequencer; the three-chain-type picture is the deck's broader vision). The repo is early-stage and not audited, so interfaces may shift.
 
-*Series drafted 2026-06-18 via agent-mesh (parallel subagents), reviewed against the technical-accuracy watchlist and audited against eez-core-protocol.*
+**Corroborated against the BuilderRoom workshop recording (2026-06-17, Friederike / Martin / Jordi)** — the full recording of the session the deck digests came from. The recording confirmed the core mechanism and corrected the status picture. Current status per that recording: contracts are "semi-finalised" (working, many tests pass, one more gas/complexity iteration planned); a Devnet plus a Chiado (Gnosis testnet) deployment with the most-recent contracts are live now with partial functionality; an Ethereum-mainnet deploy is targeted for end of summer but shipped as a testnet ("use at your own risk", "slightly audited", "not for real money"); Rollup 0 deploys in August, hardening into Rollup 1; Gnosis Chain becomes the first EEZ L2 optimistically by end of year in limited capacity (synchronous single calls, not nested) with a prover compromise (not purely ZK; partially ZK plus a multisig/TEE).
+
+*Series drafted 2026-06-18 via agent-mesh (parallel subagents), reviewed against the technical-accuracy watchlist, audited against eez-core-protocol, and corrected 2026-06-20 against the 2026-06-17 BuilderRoom workshop recording.*
