@@ -252,4 +252,69 @@ A proof can also be submitted in a **single transaction** (for L2-originated sta
 
 ---
 
+## Appendix — Audience Q&A
+
+Reconstructed from the recording (diarisation is imperfect, so audience roles are inferred from content — the SAFE engineer, the Ethereum researcher, the protocol researcher — and the team responder is named where clear).
+
+### Proxies & addressing
+1. **Q: What does the proxy/stub on L1 look like — canonical, just the API?** → *Martin:* a generic contract with a single fallback handler; supports any ABI; forwards the full calldata + value to the EEZ contract — "just a forwarder" recording input/output pairs.
+2. **Q: Must the proxy address equal the deployed contract's address, or can it route anywhere?** → *Martin:* the L2 target keeps its own address; the L1 proxy is different but **deterministic from two things — contract address + chain ID**.
+3. **Q: So it's easy to determine where the proxy is?** → *Martin:* easy-ish, but ~20 chains × ~1M accounts ≈ 20M potential proxies, so you usually pass a **hint** (CREATE2 addresses are possible).
+4. **Q: Could it auto-deploy proxies if they don't exist?** → *Martin:* yes — the composer bundles (1) deploy proxy, (2) load lookup table, (3) user tx. Three txs as a bundle.
+5. **Q (SAFE): Is there msg.sender aliasing? Calling from L1 do I get a different sender?** → *Martin:* yes — on L2 the `msg.sender` is the **proxy of your EOA**; the entry is owned by that proxy, controlled only by your L1 EOA.
+6. **Q (SAFE): What if I call the proxy outside the composer bundle?** → *Martin:* it looks up the call, doesn't find it, and **reverts**.
+7. **Q (SAFE): But ERC-20 `balanceOf` must not revert, and the proxy does outside a bundle.** → *Jordi:* "this is the one caveat." Depending on a revert for logic is a design flaw; you can't use the public L1 mempool — route via composer/bundle/AA.
+
+### Gas, payment & transactions
+8. **Q: Who pays the gas for the composer transaction?** → *Martin:* the **user** — a small tx plus a larger tip; the composer fronts the extra txs and the builder reimburses it from the tip.
+9. **Q: A builder could include the user tx *without* the composer tx, so it reverts — allowed since it's not part of the L1 protocol.** → *Martin:* correct, a current **trust assumption**. AA + transient storage fixes it (user pays only if it doesn't revert). ~400K gas full real-storage, ~300K normal L1→L2, ~10× cheaper via transient.
+10. **Q: An L1 tx to the proxy is mirrored on L2 — but the L1 chain ID makes the signature invalid on L2.** → *Martin:* it isn't a raw tx on L2; it's a **system transaction** carrying the call.
+
+### Nonces, identities & ordering
+11. **Q: What's the nonce of a tx from mainnet vs one a second later on Gnosis?** → *Jordi/Martin:* the nonce lives on the **originating chain**; chains connect only via calls. You have **two identities** (L1 EOA + L2 proxy).
+12. **Q: So the message sender differs by origin?** → *Martin:* yes — from L1 it's the proxy of your EOA; directly on L2 it's just the EOA.
+13. **Q (Ethereum researcher): How do you order cross-chain transactions — do L2s compete with tips?** → *Martin/Jordi:* the **composer** selects ordering; within a rollup, ultimately Ethereum decides. Same-L1-state swaps are ordered by Ethereum (separate txs) or the composer (same batch).
+
+### Node architecture & following chains
+14. **Q: Same client or two clients, and what's the communication?** → *Jordi:* distinguish the **composer** (must synchronise every touched chain) from a **follower** (only needs L1 + blobs, never other chains).
+15. **Q (protocol researcher): You can't validate an L1→L2 tx without seeing the other chain.** → *Jordi:* you **prove** it — the proof asserts the call is in the blobs and the STF followed the rules; once on Ethereum it's settled history; chains stay independent via proofs.
+16. **Q (protocol researcher): Your diagram shows an interchain dependency with no blob.** → *Jordi:* it's **guaranteed via proof** (ZK or TEE).
+
+### Static / async calls
+17. **Q: Can static calls that don't touch state be done free of charge?** → *Martin:* essentially yes — that's why they push Ethereum's state root onto the L2 fast; static reads are near-free / pure-L2 cost.
+18. **Q (audience): ERC-20 is non-commutative — a later tx could invalidate a transfer.** → *Jordi:* as sequencer you have full control and can resolve whether something conflicts.
+19. **Q: Is that on the sequencer side?** → *Martin:* if it wants to give fast confirmations it tracks dependencies; otherwise the user learns later that it reverted.
+20. **Q (Ethereum researcher): Optimism quarter-second blocks — can an L2 block static-call L1 and stay a consistent history "epsilon after" the L1 block?** → *Martin:* use-case-dependent — fine for solely-controlled resources, risky for shared/timing-sensitive ones; outgoing L1 calls are **executed and verified**, never assumed top-of-block.
+21. **Q: How do you express the sync-vs-async preference?** → *Martin:* **two proxies** for the same address — one synchronous, one static-on-last-block-header.
+22. **Q (protocol researcher): Why make the start of the block a special case? / In an Amsterdam BAL world you don't know state per-tx.** → *Martin:* if you could assume top-of-block everything's deterministic, but you can't, so you execute and verify the returns regardless.
+23. **Q: Would async oracle calls break atomicity?** → *Martin:* same as the key lookup — async-on-last-header is cheap pure-L2; needing the latest forces an L1 execution.
+
+### Multi-prover & proof systems
+24. **Q (after break): Special hardware / a GPU cluster for proving?** → *Jordi:* Zisk uses **standard GPUs** in a cluster, scales well; special ZK hardware is immature — "no miracles… it's GPUs."
+25. **Q: With 3 rollups on 2 proof systems, are same-system proofs aggregated?** → *Jordi:* yes — rollup 1 Zisk, rollup 2 both (two VKs), rollup 3 SP1; **two proofs total**, each proving everything except the rollups it isn't responsible for; **both must be valid or all reverts**.
+26. **Q: Does a cycle in the calls (L1→L2→L1) break proving?** → *Jordi:* no — any nesting/combination works.
+27. **Q (protocol researcher): You prove returns, but real execution has side effects too.** → *Jordi:* for L2 the proof commits to each touched L2's **final state root** (all writes implied); for L1 EEZ only cares the **return value** matches.
+
+### Proving internals, timing & blobs
+28. **Q: The ~3 seconds — that's after the position of the bundle?** → *Jordi:* yes.
+29. **Q: How long does bundle-building take / what boundary are we hitting?** → *Jordi:* depends on batch count; the whole thing must land within the **12-second** slot.
+30. **Q: What are the blobs in the proof — the whole rollup blob?** → *Jordi:* a **normal Ethereum L1 blob** ("EEZ block"), not chain-specific; it carries the interchain context-switching.
+31. **Q: Will the composer prove all txs on all chains? / Can parts be pre-built?** → *Jordi/Martin:* prover and composer are **separable** (many provers); chains can pre-prove their own L2-only parts; the split is open.
+
+### Builder/PBS integration & proving decentralisation
+32. **Q (SAFE): Do composer/prover need a builder for the initial L1 state?** → *Martin:* the prover is part of the composer; you submit a **bundle to a builder**; the L1 state must be known at proving start.
+33. **Q: With a builder you get a guarantee you can't get otherwise?** → *Martin:* yes — you make an assumption; **validator top-of-block integration** would remove the risk but isn't necessary.
+34. **Q: A proof can be submitted in a single tx — what's the incentive, could it decentralise proving?** → *Martin:* for L2-originated transitions the incentive is **collecting the fees** — a potential proving-decentralisation path.
+35. **Q (protocol researcher): Current or next block? By the time you see the block it's too late.** → *Martin:* you build for the **next** block; the proof starts ~3–4 s before the slot, is published ~0.5 s before, and the builder inserts it as a regular tx.
+
+### Tokens, bridges & status
+36. **Q: Will you implement bridging contracts as part of EEZ?** → *Martin:* EEZ is **one level below bridges** (arbitrary calls); sending ETH = a call with value; token bridges are **periphery** — a canonical bridge + a proxy-creating helper will be provided.
+37. **Q: How do you solve tokens with Gnosis?** → *Martin:* wire the existing **AMB** into EEZ so tokens stay the same; today a deposit takes ~30 min, but EEZ lets you bridge + swap + return in one tx (devnet already runs a split-trade and a flash-loan arbitrage).
+38. **Q: Are the proxies completely stateless — a nonce, self-destruct?** → *Jordi/Martin:* **stateless** (bytecode = EEZ contract + which (address, chain) it represents), no storage/local owner, ETH forwarded immediately, **cannot self-destruct**.
+39. **Q: Can we use it today? Which L2s are registered — testnet or mainnet?** → *Martin:* Devnet + Chiado now; contracts semi-finalised; Ethereum **testnet** end of summer ("not for real money"); Gnosis the first EEZ L2 by end of year, limited.
+40. **Q (SAFE): This changes the portable-address paradigm — align with the EF chain-specific-address initiative?** → *Jordi/Martin:* they'd prefer per-chain addresses, but backwards-compatibility forced proxies; "a problem for later," and EEZ "doesn't take anything away."
+41. **Q: Who do we contact to test an application?** → *Team:* **"Arman is the best person"**; there's a Telegram group.
+
+---
+
 *Digest compiled 2026-06-20 from the 17 June 2026 BuilderRoom workshop recording. This is the full-recording companion to the deck digest (`dappcon-2026-eez-node-architecture.md`), the proving talk (`dappcon-2026-realtime-proving-talk.md`), Martin's overview (`dappcon-2026-martin-eez-overview-talk.md`), and the Gnosis-chain talk (`dappcon-2026-gnosis-chain-eez-talk.md`). Engineering-level founding material — quote as the builders' framing, not approved EEZ comms.*
