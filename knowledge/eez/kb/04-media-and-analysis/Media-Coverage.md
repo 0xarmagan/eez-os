@@ -61,4 +61,16 @@
 
 ---
 
+## Conference Talks — DAPPCon Berlin 2026
+
+The EEZ block at DAPPCon Berlin (16–18 June 2026). Source digests live in `knowledge/eez/sources/`. Primary sources — quote as the speakers' framing, not approved comms; Gnosis-on-EEZ is pre-GIP roadmap.
+
+- **[EEZ Overview & Why Gnosis Will Become an L2](../../sources/dappcon-2026-martin-eez-overview-talk.md)** — Martin Köppelmann (29:03). The fragmentation problem, two requirements to be an EEZ chain, the time-travel intuition, and the Gnosis Chain / Rollup Zero→One plan.
+- **[Gnosis Chain: The First EEZ Chain](../../sources/dappcon-2026-gnosis-chain-eez-talk.md)** — Phillipe Schommers (Day 1, 32 slides). Four integration points, trust model as a parameter (multisig today → zk ×3), Chiado prototype, and aggressive timeline.
+- **[Real-Time Proving & Synchronous Composability Between Rollups](../../sources/dappcon-2026-realtime-proving-talk.md)** — Jordi Baylina (27:38). ZisK 1.0 alpha, the three things the EEZ proof proves, ADSTF, the cryptographic accumulator, and the ~3s proving target. [YouTube](https://www.youtube.com/watch?v=f5POkcq015s).
+- **[EEZ Architecture Workshop](../../sources/dappcon-2026-eez-node-architecture.md)** — Jordi Baylina (Day 2 workshop). Digest of the full 56-slide deck (composer, EEZ Trace / blob format, ADSTF + ZisK pipeline, roadmap) plus the hand-drawn node-software topology. Engineering-level founding material.
+- **[Vitalik & Friederike on EEZ (panel)](../../sources/dappcon-2026-vitalik-friederike-eez.md)** — Vitalik Buterin with Friederike Ernst (15:57), closing the EEZ block. EEZ as deep Ethereum integration and a default-interoperability standard; four chain categories; "oracles over stage two." Positioning material, not technical claims.
+
+---
+
 **See Also:** [EthCC-Announcement.md](EthCC-Announcement.md) | [Bankless-Podcast.md](Bankless-Podcast.md) | [Paul-Barron-Interview.md](Paul-Barron-Interview.md)

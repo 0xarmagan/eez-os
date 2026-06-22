@@ -2,93 +2,68 @@
 
 ![Three chain types; optimistic versus pessimistic coordination](../diagrams/04-chain-types-and-coordination.png)
 
-*Explainer 4 of 7. Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026, Jordi Baylina). Engineering-level founding material. Quote as Jordi's framing, not as approved EEZ comms.*
+*Explainer 4 of 8. [Series index](README.md). Status, sourcing and caveats: [Conventions & Caveats](00-conventions-and-caveats.md).*
 
-The Ethereum Economic Zone is not one chain. It is an economic zone built on Ethereum, and it lets many rollups behave as one synchronous system. Different rollups are built in different ways. EEZ has to account for that. The DAPPCon deck names three chain types, and for each it sets out how that chain joins the zone and what it owes the rest of the system.
+The Ethereum Economic Zone is not one chain. It is an economic zone built on Ethereum that lets many rollups behave as one synchronous system. Rollups are built in different ways, and EEZ has to account for that. The DAPPCon deck names three chain types; the workshop recording adds a fourth (specialized, non-EVM state-transition functions). For each, there is how that chain joins the zone and what it owes the rest of the system. This explainer walks the types, then the two coordination methods ([optimistic vs pessimistic](GLOSSARY.md)), and closes with the [binding vs non-binding](GLOSSARY.md) sequencer distinction and how it ties back to coordination.
 
-This explainer walks through the three types. It then covers the two methods for coordinating cross-chain inclusion, optimistic and pessimistic. It closes with the binding versus non-binding sequencer distinction from the node-architecture diagram, and how that ties back to coordination.
+> **Scope: vision versus shipped code.** The three chain types here describe the deck's broader *vision*. The shipped `eez-core-protocol` repo currently scopes synchronous composability to **based rollups sharing the same L1 sequencer**: it pre-computes state transitions off-chain and verifies them on-chain to enable atomic cross-rollup calls within one L1 block. Do not assume all three types are implemented today; read each as a roadmap question. (General status: [Conventions & Caveats](00-conventions-and-caveats.md).)
 
-One framing note before the detail. EEZ is not deployed yet. The roadmap (deck slide 55) runs through smart-contract cleanup, an audit, the proving system, Composer 1.0, Chain Zero, and then connecting Gnosis Chain. So treat every "can a chain join" question as a roadmap question, not a "today" one. The mechanics below describe the design, not a live network.
+## The three chain types
 
-> **Scope: vision versus shipped code.** The three chain types in this explainer (custom native rollups, based or centralized sequencer rollups, validiums) describe the DAPPCon deck's broader vision. The shipped implementation is narrower. The core-protocol repo (`eez-core-protocol`, branded "Sync Rollups") currently scopes synchronous composability to based rollups that share the same L1 sequencer. It pre-computes state transitions off-chain and verifies them on-chain, which enables atomic cross-rollup calls within a single L1 block. That code is explicitly early-stage and not audited. Do not assume all three chain types are implemented today. Read each type as a roadmap question, not a live capability.
+| Chain type | Brings | Cross-chain mechanism | Finality path | Joining |
+|---|---|---|---|---|
+| **Custom native rollup** | Own STF (WASM, RISC-V, custom) and accepted proof systems; sovereign, governed by a rollup contract | Native CALL/RETURN between contracts on different chains via [proxies](GLOSSARY.md) (synchronous, shared state); ETH moves via L1-level ETH accounting | [Native path](00-conventions-and-caveats.md), ~12 s | Permissionless: opt in, opt out; no committee gates entry |
+| **Based / centralized-sequencer rollup** | A [sequencer](GLOSSARY.md) that signs all state transitions and is the authority over inclusion and ordering | Sequencer must coordinate with the [composer](GLOSSARY.md) so cross-chain effects land atomically with the zone | Per chain's own model | Coordinate sequencer with composer |
+| **Validium** | Off-chain data availability | Must expose cross-chain interactions (or a coordination mechanism) in blobs so composers can include them | Per chain's own model | Must expose its cross-chain interactions in blobs; may keep self-contained transactions off-chain |
+| **Non-EVM / specialized STF** | A custom state-transition function: privacy chains (Zcash-like / privacy pools), EVM-plus-custom-precompiles, or any other "way of extending Ethereum in your own way" | Same proxy CALL/RETURN model; the chain proves its own STF, so the rest of the zone need not run that execution model | Per chain's own model | Register the rollup contract with its STF and proof system; EEZ imposes no single execution model |
 
-## Chain type 1: custom native rollups
+A [custom native rollup](GLOSSARY.md) defines its own rules; EEZ imposes no single execution model. Inside it, operations are [execution entries](GLOSSARY.md), not transactions. ("Transaction" is the right word for L1 and for partner chains that run their own transaction model.) Cross-rollup interaction is a normal CALL and RETURN, not message passing and not a bridge: on L1 the participating contracts appear as proxies that share state. That is the concrete form of "proxies, not bridges."
 
-A custom native rollup brings its own state transition function. The deck is explicit that this function can run in WASM, in RISC-V, or in a custom format. The rollup defines its own rules and its own accepted proving systems. EEZ does not impose one execution model. Rollups are sovereign, governed by a rollup smart contract.
+![Deck slide: a six-item grid describing custom native rollups.](../diagrams/deck-slides/slide-06.png)
+*From Jordi's DAPPCon deck (slide 6): custom native rollups.*
 
-Cross-rollup interaction here is a normal Ethereum CALL and RETURN between smart contracts on different chains. A contract on chain 1 calls a contract on chain 2, and the result returns. This is not message passing and not a bridge. On L1, the participating contracts exist as proxies of their real counterparts on the rollup. The proxies are synchronous and they share state. That is the concrete form of "proxies, not bridges".
+For **based and centralized-sequencer rollups**, the deck treats any centralized rollup as a based rollup whose state transitions are all signed by the sequencer. A self-contained chain's sequencer can act alone; the moment a transaction touches another chain, the sequencer and composer must agree on inclusion. Here "transaction" is acceptable, scoped to that chain's own model. The execution-entries rule applies only to native rollups.
 
-Inside a native rollup, the operations are execution entries, not transactions. Keep that distinction. "Transaction" is the right word for L1, and for partner chains that run their own transaction model, but not for the work happening inside an EEZ native rollup.
+![Deck slide titled "Based / Centralized Sequencer Rollups".](../diagrams/deck-slides/slide-07.png)
+*From Jordi's DAPPCon deck (slide 7): based and centralized-sequencer rollups; this slide also carries the optimistic vs pessimistic coordination methods.*
 
-Native rollups that use ETH as their native asset can include ETH directly in CALLs. Moving ETH across rollups does not use a bridge. It uses rollup-level ETH accounting maintained in L1. The L1 layer keeps the books so the zone stays consistent.
+For **[validiums](GLOSSARY.md)**, the data-access split matters. Self-contained work can stay private to the validium. Anything that reaches across chains must be visible to the coordination layer. The deck makes the split precise: rebuilding a validium's *full* state needs extra data from its own DA arrangement, outside the blobs; *routing calls* to or from it only needs the interactions recorded in the blobs. Other chains connecting to a validium do not need its full state, only the calls and returns that cross the boundary. The heavier data requirement falls on the composer connecting the validium, not on every chain in the zone.
 
-Creation is permissionless. Anyone can create a native rollup and opt it in, and a rollup can opt out again. No committee gates entry.
+![Deck slide titled "Validiums".](../diagrams/deck-slides/slide-08.png)
+*From Jordi's DAPPCon deck (slide 8): validiums.*
 
-On finality, native rollups follow the synchronous native path, which targets roughly 12 seconds, de facto in step with Ethereum. That is distinct from the async mode, which is not a slower settlement path but a cheaper read mode. An async static call reads against a possibly-outdated L1 block header, which is close to free because it stays on the L2; getting the latest current state instead means executing the call on Ethereum. Do not conflate the async read mode with a 20-minute finality figure. The roughly 12-to-20-minute number that appears elsewhere is the stall cost of a full-chain pessimistic lock, covered under coordination methods, not a finality path.
-
-## Chain type 2: based and centralized sequencer rollups
-
-The second type covers based rollups and centralized sequencer rollups. The deck treats any centralized rollup as a base rollup whose state transitions are all signed by the sequencer. The sequencer is the authority over what the chain includes and in what order.
-
-This creates a coordination requirement. The L2 sequencer must coordinate with the composer to include cross-chain transactions. The composer is the component that builds and sends the batch to L1, and anyone can run one. For a self-contained chain the sequencer can act alone. The moment a transaction needs to touch another chain, the sequencer and the composer have to agree on inclusion, because the cross-chain effect has to land atomically with the rest of the zone.
-
-The deck gives two methods for that coordination, optimistic and pessimistic. They are covered in their own section below, because they apply across chain types, not only to this one.
-
-A practical note on terms. For these partner chains, "transaction" is acceptable, scoped to that chain's own model. The "execution entries" rule applies to EEZ native rollups, not to a based or centralized chain that already speaks in transactions.
-
-## Chain type 3: validiums
-
-A validium keeps its data off-chain rather than posting it all to blobs. The deck states that a validium may omit self-chain-only transactions from blobs. If a transaction only affects the validium itself, the validium does not have to publish it for the rest of the zone to function.
-
-The condition is cross-chain reach. If a validium's transactions are to touch other chains, it must provide that information, or a coordination mechanism with composers, for the cross-chain part. The composer cannot reason about a cross-chain effect it cannot see. So the validium has to expose enough, either the data itself or an agreed mechanism, for the cross-chain interaction to be included and proven. Self-contained work can stay private to the validium. Anything that reaches out has to be visible to the coordination layer.
-
-This keeps the validium's data-availability savings for its own internal activity, while still letting it join cross-chain flows when it chooses to. As with native rollups, joining is the chain's choice, and EEZ does not force a single data model on every participant.
-
-In the DAPPCon talk Jordi made the access split precise. To rebuild a validium's full state you need extra data from sources outside the blobs, which is the validium's own data-availability arrangement. To route calls to or from the validium, the composer needs access to that data, because it has to see the cross-chain effect to include it. Other chains connecting to the validium do not need the full validium state. They only need the interactions recorded in the blobs, the calls and returns that actually cross the boundary. So the heavier data requirement falls on the composer that connects the validium, not on every chain in the zone.
-
-## Chain type 4: non-EVM and specialized state transition functions
-
-Jordi was explicit in the workshop that a joining chain does not have to be EVM at all. Because a native rollup brings its own state transition function, that function can be anything. He named privacy chains as the example, a Zcash-like design or a privacy-pool model, and also EVM plus custom precompiles. His framing was "a way of extending Ethereum in your own way". The zone does not require a single execution model. A chain can run a specialized STF, keep its own semantics, and still join cross-chain flows through the same proxy and coordination machinery as the other types. This is the open end of the chain-type list: the deck's named categories are not a closed set, and a sufficiently different STF is welcome as long as it meets the same cross-chain visibility and proving obligations.
+For **non-EVM and specialized STFs**, the recording is explicit that the execution model is open. A chain can run a privacy STF (Zcash-like, or privacy pools), EVM with custom precompiles, or anything else ("a way of extending Ethereum in your own way"). It joins the zone the same way the others do: it registers its rollup contract with its own state-transition function and accepted proof system, then proves its own STF. Because each chain proves itself, the rest of the zone never needs to run that execution model. It only verifies the proof.
 
 ## Coordination methods: optimistic and pessimistic
 
-Cross-chain inclusion needs a way to keep the participating chains consistent while a cross-chain interaction is being assembled and proven. The deck names two methods. They sit on a liveness-versus-safety trade-off, and neither is universally better.
+Cross-chain inclusion needs a way to keep participating chains consistent while an interaction is assembled and proven. The deck names two methods on a liveness-versus-safety trade-off; neither is universally better. The cascade direction is one-way: because EEZ blocks commit to a specific Ethereum block, an **Ethereum reorg forces the L2 to reorg** for any sync or async block that depended on the reorged-out L1 state (L1→L2). L2-only blocks, which touch no L1 state, never need this.
 
-### Optimistic: reorgs
+> **Shipped reality.** The shipped rollup currently implements only the optimistic / reorg path (commit first, repair by reorg if the assumption breaks). Pessimistic locking and binding-sequencer mode, including their pairings below, are design intent and not yet in code. The tables describe the intended design; read the pessimistic and binding rows as roadmap, not available options.
 
-The optimistic method proceeds on the assumption that the cross-chain transaction will be included as planned, and it relies on reorgs to clean up if that assumption breaks. The chain keeps producing blocks. If the cross-chain interaction ends up not landing the way it was assumed, the affected portion is reorged out and rebuilt.
+| Method | Mechanism | Optimizes for | Cost | Fits |
+|---|---|---|---|---|
+| **[Optimistic](GLOSSARY.md)** | Proceed assuming inclusion; reorg out and rebuild if the assumption breaks | Liveness, lower latency (the chain never stalls) | Recent blocks unsafe until the assumption settles; a reorg can undo work | Chains/apps valuing continuous progress that tolerate revised recent blocks |
+| **[Pessimistic](GLOSSARY.md)** | Lock the affected state first, then proceed; the lock need not be the whole chain | Safety: no reorg on locked state | Locked state can't progress independently; acquiring the lock adds latency. A *full-chain* lock is the inefficient extreme. The chain stalls waiting on L1 finality, on the order of ~12–20 min, which is why partial locks exist | High-value or hard-to-reverse interactions where a reorg is unacceptable |
 
-The benefit is liveness and lower latency. The chain does not stall waiting for confirmation from elsewhere. It keeps moving. The cost is that recently produced blocks are not safe until the cross-chain assumption settles. A reorg can undo work. The dependency also runs the other way: because a sync block commits to a specific Ethereum block, an Ethereum reorg forces the L2 to reorg its corresponding sync and async blocks to stay in step. The L2's optimistic blocks inherit Ethereum's reorg risk. This method fits chains and applications that value continuous progress and can tolerate that recent blocks may be revised. It is the looser, faster option.
+**Choosing between them.** Optimistic favours liveness and accepts reorg risk; pessimistic favours safety and accepts added latency on the locked state. Because locking can be *partial*, a chain can mix the two, applying pessimistic locking only on sensitive paths and optimistic everywhere else. The deck presents both as intended methods, so this is a design choice for the participating chain, not a single mandated rule.
 
-### Pessimistic: locking
-
-The pessimistic method locks before it proceeds. It does not assume inclusion will succeed. It secures the relevant state so that the cross-chain interaction either completes or fails cleanly, without a reorg. The deck adds an important qualifier. The lock is not necessarily the full chain. The system can lock only the part that the cross-chain interaction touches, rather than freezing everything.
-
-The benefit is safety. There is no reorg risk on the locked state, because nothing conflicting can be produced while the lock holds. The cost is liveness and latency. Locked state cannot make independent progress until the lock clears, and acquiring the lock adds delay. Locking the full chain is the inefficient extreme. Jordi put the cost of a full-chain lock at roughly 12 to 20 minutes of stall, because the chain has to send to L1 and wait there before it can release. That figure is the price of the pessimistic full-chain lock, not a finality "path". Scoping the lock to only the affected state is what makes the method usable. This method fits high-value or hard-to-reverse interactions where a reorg would be unacceptable. It is the stricter, slower option, made more usable by the fact that the lock can be scoped to only the affected state.
-
-### Choosing between them
-
-The choice is the classic one. Optimistic favours liveness and latency and accepts reorg risk. Pessimistic favours safety and accepts added latency and reduced liveness on the locked state. A chain that prizes uninterrupted block production leans optimistic. A chain handling interactions that must never be reversed leans pessimistic. Because locking can be partial, a chain can also mix the two, using pessimistic locking only on the sensitive paths and staying optimistic elsewhere. The deck presents both as intended methods, so this is a design choice for the participating chain, not a single mandated rule.
+> **Don't read the lock-stall as a finality path.** The ~12–20 min above is the cost of *stalling a full chain* while a pessimistic lock waits on L1 finality. It is not the zone's settlement timing. For the actual finality model (native, async settlement, proof), use the code-verified timing table in [Conventions & Caveats](00-conventions-and-caveats.md); don't conflate the two. Separately, **async static calls** are a cheap read mode, not a settlement path: a contract can read an Ethereum value off a possibly-outdated L1 block header at near-zero (pure-L2) cost; only reading the *latest* current state forces an actual L1 execution. EEZ gives each Ethereum address two proxies for this, one for synchronous calls and one for async static-on-last-header reads.
 
 ## Binding versus non-binding sequencers
 
-The node-architecture diagram (Jordi's hand-drawn topology) shows two deployment modes for how a sequencer relates to a composer. The distinction matters because it sets how strong the cross-chain guarantee is.
+The node-architecture diagram (Jordi's hand-drawn topology) shows two deployment modes for how a sequencer relates to a composer. The mode sets how strong the cross-chain guarantee is.
 
-In non-binding mode, the diagram shows a composer with a simulator and a "sequencer not binding", stacked across several rollups. The composer simulates and proposes, but the sequencer has not committed to the exact cross-chain ordering in advance. The expert review in the source is direct about the effect. Non-binding degrades same-block atomicity to "same-batch, eventually". The cross-chain interaction still resolves, but not with the tight same-block guarantee.
+> **Attribution note.** The "binding / non-binding sequencer" vocabulary comes from the node-architecture source, not the 17 June workshop recording. The recording does not use these terms. The underlying ideas (sequencer-composer coordination, optimistic vs pessimistic) are in both; the binding/non-binding labels are this section's framing, carried from the source diagram.
 
-In binding mode, the diagram shows separate composer instances, each paired with a "sequencer binding", feeding sequenced chains. Here the sequencer commits to the composer's cross-chain inclusion. That commitment is what supports the stronger, same-block atomic behaviour, because the sequencer is bound to the ordering the composer assembled.
+| Mode | Sequencer commitment | Atomicity | Pairs with |
+|---|---|---|---|
+| **[Binding](GLOSSARY.md)** | Commits up front to the composer's cross-chain ordering | Same-block atomic | Pessimistic (lock-and-commit, no reorgs) |
+| **[Non-binding](GLOSSARY.md)** | Composer simulates and proposes; sequencer keeps producing | Degrades to "same-batch, eventually" | Optimistic (reorgs are the cleanup tool) |
 
-This connects straight back to the coordination methods and to chain type 2. A binding sequencer commits up front, which pairs naturally with the pessimistic, lock-and-commit style where the goal is no reorgs and a firm guarantee. A non-binding sequencer keeps producing and lets the composer simulate and propose, which pairs with the optimistic style where reorgs are the cleanup tool and liveness comes first. The based and centralized sequencer rollup type is exactly where this shows up, because that is where the L2 sequencer must coordinate with the composer to include cross-chain transactions in the first place.
+This connects straight back to the coordination methods and to chain type 2: the based / centralized-sequencer type is exactly where an L2 sequencer must coordinate with the composer, so it is where this distinction shows up.
 
-There is an honest cost to name. Binding mode asks the sequencer for a commitment, and the deck states that fee incentives for composers are not yet defined. The source notes that rational operators may default to non-binding or optimistic in quiet periods, when cross-chain revenue is thin. So the binding, pessimistic end of the design buys stronger guarantees, and the system still has to make running it worthwhile. That economic question is open, and it is roadmap work, not a settled answer.
+There is an honest cost to name. Binding mode asks the sequencer for a commitment, and the deck states that **fee incentives for composers are not yet defined**. The source notes that rational operators may default to non-binding or optimistic in quiet periods, when cross-chain revenue is thin. The binding, pessimistic end of the design buys stronger guarantees, and the system still has to make running it worthwhile. That economic question is open, roadmap work and not a settled answer.
 
-## Accuracy notes
+---
 
-- EEZ is not deployed yet. The roadmap ends with Composer 1.0, Chain Zero, and connecting Gnosis Chain (deck slide 55). Frame any participation question as a roadmap question, not a "today" one.
-- The synchronous native path targets roughly 12 seconds, de facto in step with Ethereum. "Async" is a read mode, not a finality path: an async static call reads a possibly-outdated L1 header cheaply on the L2, while the latest state requires executing on Ethereum. The roughly 12-to-20-minute figure is the stall cost of a full-chain pessimistic lock, not a settlement path. Do not conflate the two.
-- EEZ is an economic zone built on Ethereum, not "an L2". Native rollups are an L2 construction that EEZ builds on top of.
-- Cross-chain interaction uses proxies, not bridges. Proxies are synchronous and share state. Cross-rollup ETH movement uses rollup-level ETH accounting in L1, not a bridge.
-- Inside EEZ native rollups, the operations are execution entries, not transactions. "Transaction" is acceptable for L1 and for partner chains (based, centralized sequencer, validium) that run their own transaction model, scoped to them.
-- EEZ is proof-system agnostic and multi-prover-capable. Each rollup sets its own threshold via its manager contract, an M-of-N choice that can be one or more proving systems. There is no protocol-enforced minimum of two. The single `prover` box in the node-architecture diagram is a topology abstraction, not a single-prover claim. Do not use singular proving framing for EEZ as a whole.
-- The two coordination methods (optimistic = reorgs, pessimistic = locking) and the binding versus non-binding distinction are Jordi's engineering-level framing from the DAPPCon workshop, not approved EEZ comms.
-- Composer fee incentives are undefined in the deck. The non-binding-default risk in quiet periods is an open design area, flagged as roadmap work.
+*Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026, Jordi Baylina).*
