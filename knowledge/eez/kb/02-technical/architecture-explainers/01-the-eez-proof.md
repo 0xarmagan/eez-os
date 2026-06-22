@@ -1,20 +1,12 @@
 # The EEZ Proof: Synchronous Cross-Rollup Execution
 
-![Synchronous CALL/RETURN in one proven block vs an asynchronous bridge gap](../diagrams/01-the-eez-proof.png)
 
-*Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026; Friederike, Martin, and Jordi Baylina). Engineering-level founding material. Treat the combined-execution sentence as a deck paraphrase, not a verbatim spoken quote, and treat all of this as founders' framing rather than approved EEZ comms. EEZ is at roadmap stage and is not deployed yet.*
+*Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026; Friederike, Martin, and Jordi Baylina).
 
 This explainer is for builders and partners who want to understand the core technical claim behind the Ethereum Economic Zone (EEZ): that it proves the combined execution of many rollups as a single, synchronous transaction. It explains what that sentence means, how the proof model works, why it counts as synchronous composability, what security it claims, and how it differs from bridging.
 
 EEZ is an economic zone built on Ethereum. It is not an L2, and it is not equivalent to any single rollup. It is the shared proving and settlement layer that lets independent rollups call into each other as if they were one machine.
 
-## The core claim
-
-The DAPPCon deck frames it this way: EEZ proves the combined execution of many rollups as a single, synchronous transaction. (This is a paraphrase of the deck's framing, not a verbatim spoken quote.) Friederike put the same idea live in plainer terms: EEZ collapses settlement to Ethereum's twelve seconds, so everything in the zone is "de facto synchronous with Ethereum."
-
-Read that carefully. The unit of proof is not one rollup. It is the combined execution across several rollups, treated as one atomic step. When a contract on one rollup calls a contract on another, both sides of that interaction land in the same proven batch. They either both happen or neither does.
-
-This is the difference that matters. Most cross-chain systems today break an interaction into two separate events on two separate timelines. EEZ keeps it as one event.
 
 ## The CALL and RETURN model
 
@@ -54,6 +46,8 @@ One accuracy note on speed, because it is easy to blur. EEZ does not have a sing
 
 ## A worked example
 
+![Synchronous CALL/RETURN in one proven block vs an asynchronous bridge gap](../diagrams/01-the-eez-proof.png)
+
 Take a deck illustration: a user account on one rollup wants to vote in a DAO that lives on another rollup, and the DAO only accepts votes from whitelisted accounts. (This is a teaching example. The actual live demo at the workshop was simpler: an ENS-style key-value registry, where the presenter registered a name from L1 through the proxy. It reverted several times before it worked, a reminder that this is early software.)
 
 On Rollup R2 you have three real contracts: `UserAA` (the user's account), `Whitelist` (the eligibility check), and `DAO` (the governance contract). On L1 these appear as proxies: `UserAA(*)`, `Whitelist(*)`, `DAO(*)`.
@@ -78,8 +72,6 @@ This also rests on a current trust assumption. The composer sends the builder a 
 ## Why builders should care
 
 If you build across multiple rollups today, you carry the cost of asynchrony yourself. You write relayer logic, you handle the case where one side confirmed and the other did not, and you trust whatever bridge sits in the middle. EEZ's claim is that you can stop doing that and write a plain contract-to-contract call, with the cross-rollup interaction proven atomically under Ethereum-grade security.
-
-EEZ is not live yet. The roadmap runs through smart-contract cleanup, an audit, the signature and Zisk proving systems, Composer 1.0, Chain Zero, and then connecting Gnosis Chain. So this is a design to build against and plan for, not a network you can join today. The architecture above is what that network is being built to deliver.
 
 ## Accuracy notes
 
