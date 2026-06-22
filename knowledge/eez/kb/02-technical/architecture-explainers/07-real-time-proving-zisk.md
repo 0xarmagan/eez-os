@@ -84,7 +84,7 @@ Now the point we flagged at the top. EEZ is proof-system agnostic and multi-prov
 
 - `threshold`: an owner-set value on the manager contract, any value including one.
 - `checkProofSystemsAndGetVkeys(...)`: returns the per-system verification keys for a batch.
-- Its reverts: `ThresholdNotMet(submitted, required)` when too few proofs are supplied, and `ProofSystemNotAllowed` when a batch names an unconfigured system.
+- Its reverts: `ThresholdNotMet(submitted, required)` when too few proofs are supplied, and `ProofSystemNotAllowed` when a batch names an unconfigured system or when proof systems are not in strictly ascending order (ordering is also enforced here, not only unknown systems).
 - `_fetchVkMatrix(...)`: helper that builds the per-rollup VK matrix (tracking which systems each rollup configured), feeding off structures like `ProofSystemBatchPerVerificationEntries`.
 - `InvalidProofSystemConfig()`: a separate registry-side structural error (empty list, proof-count mismatch, wrong ordering); don't confuse it with the threshold check, as it is not thrown by `checkProofSystemsAndGetVkeys`.
 

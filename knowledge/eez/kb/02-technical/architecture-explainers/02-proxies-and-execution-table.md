@@ -64,9 +64,9 @@ A bridge connects two separate states; a proxy exposes one state in two places. 
 
 *The mechanics below describe the design as specified; they are not yet shipped. See the [status note](00-conventions-and-caveats.md).*
 
-[Native rollups](GLOSSARY.md) can include ETH inside a cross-rollup `CALL`. There is no wrapping and no special ledger: a cross-rollup ETH transfer is just a plain `CALL` carrying value. You send ETH to the proxy on L1, which results in a call with value, and the EEZ contract records it as part of the Execution Table, the same record that holds every other call and return.
+[Native rollups](GLOSSARY.md) can include ETH inside a cross-rollup `CALL`. There is no wrapping: a cross-rollup ETH transfer is a plain `CALL` carrying value on the call's value field, not a wrapped ERC-20 to mint and burn. Underneath, L1 keeps per-rollup ETH accounting: each rollup has an `etherBalance` tracking the ETH held on its behalf. When ETH crosses, it is burned to the system address on the source side and minted on the destination side, with the total conserved across rollups. The EEZ contract records the transfer as part of the Execution Table, the same record that holds every other call and return.
 
-L1 is the settlement point and the shared record. The ETH stays native on each side; the transfer rides on the ordinary `CALL`/`RETURN` mechanism rather than minting a wrapped token on the receiving side.
+So it is native ETH, accounted on L1. The accounting is not visible to your contract: from the developer's side it is still a plain `CALL`/`RETURN`; no wrapped token appears on either side.
 
 ---
 
@@ -114,13 +114,13 @@ The **user pays**: a small transaction that calls the proxy, plus a larger tip. 
 
 There is a trust assumption here, and it is honest: a builder could include the user transaction **without** the composer transaction, in which case it reverts. The L1 protocol does not enforce the pairing.
 
-An **account-abstraction** path puts the whole sequence (deploy, load, call) into one transaction using transient storage. That is roughly 10× cheaper, and the user only pays if it does not revert.
+An **account-abstraction** path puts the whole sequence (deploy, load, call) into one transaction using transient storage. That is much cheaper than the real-storage path, and the user only pays if it does not revert.
 
 Rough costs, with the path named:
 
 - Full real-storage path: ≈ 400K gas.
-- A normal L1→L2 call: ≈ 300K gas.
-- AA / transient-storage path: ~10× cheaper than the real-storage path.
+- A normal L1→L2 call: ≈ 300K gas (roughly ~10× cheaper when routed as a meta-transaction).
+- AA / transient-storage path: much cheaper than the real-storage path (no specific multiplier from the workshop).
 
 ---
 

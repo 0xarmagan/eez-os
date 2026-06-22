@@ -11,12 +11,12 @@ There is **no single finality number for EEZ**. Always name the path beside any 
 | Path / metric | Figure | What it means |
 |---|---|---|
 | Native path | ~12 s | A native-rollup interaction settling, in line with an L1 slot. |
-| Async path | ~20 min | The slower route, used when an interaction crosses to L1 without native coupling. |
+| Async path | ~20 min (est.) | Engineering estimate for the slower route when an interaction crosses to L1 without native coupling. Not a protocol or code constant -- no wall-clock figure appears in the contracts. |
 | Proof-generation target | < 3 s | The proof budget *inside one L1 slot* so a synchronous step lands in a slot. **Not a finality number.** |
 
 The < 3 s target is the minimal work left at the end of an otherwise continuous, overlapped pipeline (see [Explainer 7](07-real-time-proving-zisk.md)). It is not total proving time.
 
-In the workshop's spoken usage, "async" referred to cheap static reads against a possibly-stale L1 header, and the ~12–20 min figure also surfaced as the stall of a full-chain *pessimistic* lock. The table figures above are code-verified and stand.
+In the workshop's spoken usage, "async" referred to cheap static reads against a possibly-stale L1 header, and the ~12–20 min figure also surfaced as the stall of a full-chain *pessimistic* lock. The ~12 s and <3 s figures are engineering framing from the deck and workshop. The ~20 min async figure is an engineering estimate with no corroborating source independent of that workshop context. The core contracts carry no wall-clock constants -- only block-gating logic (e.g. `lastVerifiedBlock == block.number`).
 
 ## The five distinctions (enforced throughout)
 
@@ -28,12 +28,12 @@ In the workshop's spoken usage, "async" referred to cheap static reads against a
 
 ## Verification status
 
-Conceptual claims (proxies not bridges, execution entries, `postAndVerifyBatch`, sovereign rollups, the per-rollup proving threshold) were verified **18 June 2026** against `eez-association/eez-core-protocol` (branded "Sync Rollups"). The repo is early-stage and unaudited; interfaces may shift.
+Conceptual claims (proxies not bridges, execution entries, `postAndVerifyBatch`, sovereign rollups, the per-rollup proving threshold) were verified **18 June 2026** against `eez-association/eez-core-protocol` (branded "Sync Rollups"). Timing figures (~12 s native, <3 s proving target, ~20 min async) are **not among the code-verified items** -- the contracts contain no wall-clock constants. The repo is early-stage and unaudited; interfaces may shift.
 
 The **EEZ BuilderRoom workshop recording (17 June 2026, Friederike / Martin / Jordi)** is a corroborating primary source for Explainers 1–6 and the status note above.
 
 Two scope notes that override any broader reading:
-- **Chain types** (custom native, based/centralized, validium) describe the deck's *vision*. The shipped code currently scopes synchronous composability to **based rollups sharing the same L1 sequencer**. Read each chain type as a roadmap question. (See [Explainer 4](04-chain-types-and-coordination.md).)
+- **Chain types** (custom native, based/centralized, validium) describe the deck's *vision*. In code terms, cross-rollup interactions must be verified together in the same L1 block: entries posted in a block are consumed in that block, enforced by `lastVerifiedBlock == block.number`. "Based rollups sharing the same L1 sequencer" is the deck's framing of that same-block coupling constraint. Read each chain type as a roadmap question. (See [Explainer 4](04-chain-types-and-coordination.md).)
 - **ADSTF** is the deck's conceptual term. The shipped contracts express it as execution entries, state deltas, and a rolling hash. There is no type literally named ADSTF. (See [Explainer 7](07-real-time-proving-zisk.md).)
 
 See [GLOSSARY.md](GLOSSARY.md) for term definitions and [STYLE-CHECKLIST.md](STYLE-CHECKLIST.md) for the reviewer's per-document checklist.

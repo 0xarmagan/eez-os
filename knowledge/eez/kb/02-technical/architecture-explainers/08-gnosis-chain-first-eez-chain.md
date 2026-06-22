@@ -45,15 +45,16 @@ The team treats this as buildable, not theoretical. Roughly three months from id
 - **February 2026:** Jordi Baylina's ethresear.ch post.
 - **April 2026:** a full prototype, a based rollup built on reth, live on Chiado (the Gnosis testnet).
 
-The prototype demonstrated three things, all as single atomic operations across chains:
+The prototype demonstrated four things, all as atomic operations across chains:
 
 | Demonstrated | What it shows |
 |---|---|
 | Instant deposits and withdrawals | Atomic, in both directions. |
 | Calls with return values | L1 reads an answer computed on L2 inside the same transaction. |
 | Cross-chain flash loans | Borrow, work, and repay across chains in one transaction. |
+| Nested calls, five levels deep | Execution ping-pongs between chains mid-transaction. The prototype already ran depth 5. |
 
-What is demonstrated today is the single synchronous call: one call out, optional work on the other chain, one return. The running prototype carries this restriction deliberately. In Friederike's framing, "nested calls will come later." Deep nested calls, where execution ping-pongs between chains mid-transaction, are roadmap, not a shipped capability (see "Where it is going").
+The running prototype reached five-level nesting. The deliberate restriction to single synchronous calls applies to the real-value Gnosis-on-EEZ launch at end of year, not to what the prototype proved possible. In Friederike's framing, "nested calls will come later" -- scoped to the launch, which debuts simpler even though the prototype went deeper (slide 24: "a chain carrying real value debuts simpler").
 
 A point that matters for node operators: independent full nodes re-derive identical state from L1 alone. You do not need to trust the sequencer's word, and you do not need to follow the other chains. This is the client model from [Explainer 6](06-node-architecture.md), shown working.
 
