@@ -1,16 +1,11 @@
 # The EEZ Proof: Synchronous Cross-Rollup Execution
 
+![Synchronous CALL/RETURN in one proven block vs an asynchronous bridge gap](../diagrams/01-the-eez-proof.png)
 
-<<<<<<< Updated upstream
-*Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026; Friederike, Martin, and Jordi Baylina).
-=======
 *Explainer 1 of 8. [Series index](README.md). Status, sourcing and caveats: [Conventions & Caveats](00-conventions-and-caveats.md).*
->>>>>>> Stashed changes
 
 This one is for builders and partners who want the core idea behind the [Ethereum Economic Zone (EEZ)](GLOSSARY.md), without the marketing around it. EEZ is an economic zone built on Ethereum, [not an L2](00-conventions-and-caveats.md). Ethereum does the proving and the settlement, and EEZ lets independent rollups call into each other as if they were one machine.
 
-<<<<<<< Updated upstream
-=======
 ## The core claim
 
 The DAPPCon deck frames it this way: EEZ proves the combined execution of many rollups as a single, synchronous transaction. (This is a paraphrase of the deck's framing, not a verbatim spoken quote.) Friederike put the same idea live in plainer terms: EEZ collapses settlement to Ethereum's twelve seconds, so everything in the zone is "de facto synchronous with Ethereum."
@@ -21,7 +16,6 @@ The DAPPCon deck frames it this way: EEZ proves the combined execution of many r
 Read that carefully. The unit of proof is not one rollup. It is the combined execution across several rollups, treated as one atomic step. When a contract on one rollup calls a contract on another, both sides of that interaction land in the same proven batch. They either both happen or neither does.
 
 This is the difference that matters. Most cross-chain systems today break an interaction into two separate events on two separate timelines. EEZ keeps it as one event.
->>>>>>> Stashed changes
 
 One honest qualifier before we go further. The "many rollups" picture is the design goal. Shipped code today scopes this to based rollups that share an L1 sequencer, and the atomic step is bounded to a single L1 block. See [Conventions & Caveats](00-conventions-and-caveats.md).
 
@@ -64,13 +58,7 @@ Two ideas often get mixed up here, so keep them apart. Synchronous composability
 
 ## A worked example
 
-<<<<<<< Updated upstream
-![Synchronous CALL/RETURN in one proven block vs an asynchronous bridge gap](../diagrams/01-the-eez-proof.png)
-
-Take a deck illustration: a user account on one rollup wants to vote in a DAO that lives on another rollup, and the DAO only accepts votes from whitelisted accounts. (This is a teaching example. The actual live demo at the workshop was simpler: an ENS-style key-value registry, where the presenter registered a name from L1 through the proxy. It reverted several times before it worked, a reminder that this is early software.)
-=======
 Here is the deck's own illustration. (The live demo at the workshop was a simpler one: an ENS-style registry, registering a name from L1 through the proxy. It reverted a few times before it worked.)
->>>>>>> Stashed changes
 
 ![Deck slide: a user account, a Whitelist contract and a DAO contract on rollup R2, with vote and isWhitelisted calls.](../diagrams/deck-slides/slide-03.png)
 *From Jordi's DAPPCon deck (slide 3): the DAO-vote example, UserAA / Whitelist / DAO.*
@@ -96,12 +84,8 @@ Building across rollups today, you pay for the asynchrony yourself. You write th
 
 One caveat comes with that "plain call." A proxy call only resolves if the composer has pre-registered the lookup for it in the bundle. Call the proxy outside the bundle and it reverts, because the lookup is not there. That breaks any spec that must not revert, an ERC-20 `balanceOf` for example, so leaning on a proxy call where a revert is unacceptable is a design mistake. You also cannot send these through the public L1 mempool. They have to go via the composer, the bundle, or account abstraction.
 
-<<<<<<< Updated upstream
-## Accuracy notes
-=======
 There is a trust assumption today as well. Inside the L1 block the composer's transaction goes first and the user's second. A builder could include the user's transaction without the composer's, and then it simply reverts. Nothing in the L1 protocol enforces that ordering yet.
 
 And to be clear about where this stands: EEZ is not live. It is a design to build against and plan for, not a network you can join today (see the [roadmap context](README.md)).
->>>>>>> Stashed changes
 
 *Source: `knowledge/eez/sources/dappcon-2026-eez-node-architecture.md` (DAPPCon EEZ Workshop, 17 June 2026, Jordi Baylina). Engineering-level founding material, quoted as Jordi's framing.*
